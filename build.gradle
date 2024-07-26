@@ -13,12 +13,6 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
 	mavenCentral()
 }
@@ -28,7 +22,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	runtimeOnly 'mysql:mysql-connector-java'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.33' // MySQL Connector 버전 추가
 	runtimeOnly 'com.h2database:h2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
@@ -37,16 +31,24 @@ dependencies {
 }
 
 
-
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.named('bootRun') {
+	jvmArgs = [
+			"-Dcom.sun.management.jmxremote",
+			"-Dcom.sun.management.jmxremote.port=9090",
+			"-Dcom.sun.management.jmxremote.authenticate=false",
+			"-Dcom.sun.management.jmxremote.ssl=false"
+	]
+}
+
 def frontendDir = "$projectDir/src/main/reactfront"
 
 sourceSets {
 	main {
-		resources { srcDirs = ["$projectDir/src/main/resources"]
-		}
+		resources { srcDirs = ["$projectDir/src/main/resources"] }
 	}
 }
 
@@ -58,9 +60,10 @@ task installReact(type: Exec) {
 	group = BasePlugin.BUILD_GROUP
 	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
 		commandLine "npm.cmd", "audit", "fix"
-		commandLine 'npm.cmd', 'install' }
-	else {
-		commandLine "npm", "audit", "fix" commandLine 'npm', 'install'
+		commandLine 'npm.cmd', 'install'
+	} else {
+		commandLine "npm", "audit", "fix"
+		commandLine 'npm', 'install'
 	}
 }
 

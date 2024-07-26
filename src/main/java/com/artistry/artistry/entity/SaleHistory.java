@@ -15,11 +15,11 @@ public class SaleHistory {
 
     @ManyToOne
     @JoinColumn(name = "seller_id")
-    private User seller;
+    private Users seller;
 
     @ManyToOne
     @JoinColumn(name = "buyer_id")
-    private User buyer;
+    private Users buyer;
 
     @ManyToOne
     @JoinColumn(name = "post_id")

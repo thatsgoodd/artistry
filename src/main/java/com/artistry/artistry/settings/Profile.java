@@ -2,7 +2,7 @@ package com.artistry.artistry.settings;
 
 import com.artistry.artistry.entity.Post;
 import com.artistry.artistry.entity.ScrappedPost;
-import com.artistry.artistry.entity.User;
+import com.artistry.artistry.entity.Users;
 import lombok.Data;
 import java.util.List;
 @Data
@@ -29,7 +29,7 @@ public class Profile {
     private List<ScrappedPost> scrappedPosts;
 
 
-    public Profile(User user){
+    public Profile(Users  user){
         this.bio = user.getBio();
         this.url = user.getUrl();
         this.nickname = user.getNickname();

@@ -17,7 +17,7 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     @Enumerated(EnumType.STRING)
     private PostType type; // 게시물 유형을 구분하는 필드

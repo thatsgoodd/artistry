@@ -17,7 +17,7 @@ public class SecondHandPost {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Users user;
 
     private Double price; // 가격 정보 추가
 

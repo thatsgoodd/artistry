@@ -15,10 +15,10 @@ public class Follow {
 
     @ManyToOne
     @JoinColumn(name = "from_user")
-    private User fromUser;
+    private Users fromUser;
 
     @ManyToOne
     @JoinColumn(name = "to_user")
-    private User toUser;
+    private Users toUser;
 
 }

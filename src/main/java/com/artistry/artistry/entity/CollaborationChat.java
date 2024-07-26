@@ -24,11 +24,11 @@ public class CollaborationChat {
 
     @ManyToOne
     @JoinColumn(name = "from_user_id")
-    private User fromUser; // 채팅을 보낸 사용자
+    private Users fromUser; // 채팅을 보낸 사용자
 
     @ManyToOne
     @JoinColumn(name = "to_user_id")
-    private User toUser; // 채팅을 받은 사용자
+    private Users toUser; // 채팅을 받은 사용자
 
     private String message;
 

@@ -9,10 +9,12 @@ import java.util.List;
 @Getter @Setter @EqualsAndHashCode(of = "id")
 @Builder @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+public class Users {
 
-    @Id @GeneratedValue
-    private Long id;
+    @Id
+    @Column(unique = true, nullable = false)
+    private String id;
+    //userid
 
     @Column(unique=true)
     private String email;
