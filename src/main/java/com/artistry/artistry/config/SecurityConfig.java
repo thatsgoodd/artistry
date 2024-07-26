@@ -35,9 +35,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/login").permitAll()
-                        .defaultSuccessUrl("/")
-                        .failureUrl("/login")
+                        .loginPage("/login")  // 로그인 페이지 설정
+                        .permitAll()
+                        .defaultSuccessUrl("/")  // 로그인 성공 후 리디렉션
+                        .failureUrl("/login?error=true")  // 로그인 실패 시 리디렉션
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/")

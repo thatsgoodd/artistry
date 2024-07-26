@@ -17,5 +17,6 @@ public interface UserRepository extends JpaRepository<Users, String> {
     @NonNull
     Optional<Users> findByIdAndNameAndEmail(@NonNull String id,@NonNull String name,@NonNull String email);
     // 이름, 이메일, 아이디로 비밀번호 찾기
+    Optional<Users> findByVerificationToken(String token);
 }
 

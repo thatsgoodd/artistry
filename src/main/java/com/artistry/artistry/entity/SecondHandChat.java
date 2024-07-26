@@ -33,4 +33,6 @@ public class SecondHandChat {
     private String message;
 
     private LocalDateTime sentDate; // 메시지 전송 시간
+
+    private String imageUrl;
 }

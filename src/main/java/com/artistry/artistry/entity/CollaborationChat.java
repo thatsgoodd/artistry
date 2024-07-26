@@ -30,6 +30,8 @@ public class CollaborationChat {
     @JoinColumn(name = "to_user_id")
     private Users toUser; // 채팅을 받은 사용자
 
+    private String imageUrl;
+
     private String message;
 
     private LocalDateTime sentDate; // 메시지 전송 시간

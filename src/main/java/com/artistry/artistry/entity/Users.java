@@ -26,9 +26,9 @@ public class Users {
 
     private String password;
 
-    private boolean emailVerified;
+    private boolean verified;
 
-    private String emailCheckToken;
+    private String verificationToken;
 
     private String bio;
 

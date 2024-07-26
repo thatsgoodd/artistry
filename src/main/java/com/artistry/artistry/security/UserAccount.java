@@ -50,7 +50,7 @@ public class UserAccount implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return user.isEmailVerified();
+        return user.isVerified();
     }
     // 이메일 인증 여부를 기준으로 계정이 활성화되었는지를 반환함
 }

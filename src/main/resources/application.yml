@@ -34,3 +34,18 @@ spring:
       port: 9091
       ssl: false
       authenticate: false
+
+  # 이메일 설정
+  spring:
+    mail:
+      host: ${MAIL_HOST}
+      port: ${MAIL_PORT}
+      username: ${MAIL_USERNAME}
+      password: ${MAIL_PASSWORD}
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+
