@@ -10,6 +10,7 @@ import Notice from '../../Notification/NoticeMain';
 import PostDetail from '../../PostDetail';
 import WritePost from '../../FreeBoard/WritePost';
 
+
 function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
