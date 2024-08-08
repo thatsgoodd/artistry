@@ -1,10 +1,11 @@
+// WritePost.js
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Modal, Alert, TouchableWithoutFeedback } from 'react-native';
-import { usePosts } from './PostContext'; // 파일 경로 조정 필요
+import { usePosts } from './PostContext';
 import * as ImagePicker from 'expo-image-picker';
 
 const WritePost = ({ navigation }) => {
-  const { setPosts } = usePosts();
+  const [posts, setPosts] = usePosts();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -33,9 +34,9 @@ const WritePost = ({ navigation }) => {
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setPhoto({ uri: result.uri });
-      console.log(result.uri);
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setPhoto({ uri: result.assets[0].uri });
+      console.log(result.assets[0].uri);
     } else {
       Alert.alert('사진 촬영 취소');
     }
@@ -50,26 +51,30 @@ const WritePost = ({ navigation }) => {
       quality: 1,
     });
 
-    console.log(result); // 결과를 확인
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setPhoto({ uri: result.assets[0].uri });
+      console.log(result.assets[0].uri);
     } else {
       Alert.alert('이미지 선택 취소');
     }
   };
 
   const handleSubmit = () => {
-    console.log(photo);
     if (title.trim() === '' || content.trim() === '') {
       Alert.alert('입력 오류', '제목과 내용을 모두 입력해 주세요.');
       return;
     }
 
+    const formatDate = (date) =>{
+      const hours =date.getHours().toString().padStart(2,'0');
+      const minutes =date.getMinutes().toString().padStart(2,'0');
+       return `${hours}:${minutes}`;
+    }
     const newPost = {
       id: Date.now().toString(),
       title,
       content,
-      uploadTime: new Date().toLocaleString(),
+      uploadTime: formatDate(new Date()),
       likes: 0,
       comments: 0,
       photo: photo ? photo.uri : null,
@@ -108,7 +113,7 @@ const WritePost = ({ navigation }) => {
         </TouchableOpacity>
         <View style={styles.imageContainer}>
           {photo && (
-            <Image source={photo} style={styles.image} />
+            <Image source={{ uri: photo.uri }} style={styles.image} />
           )}
         </View>
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -154,8 +159,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     zIndex:2
-
-  },overlay: {
+  },
+  overlay: {
     position: 'absolute',
     top: 55,
     left: 0,

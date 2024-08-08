@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState ,useCallback} from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, RefreshControl } from 'react-native';
 import { usePosts } from './PostContext'; // 파일 경로 조정 필요
 import PostItem from './PostItem'; // 파일 경로 조정 필요
 import initialPosts from './posts';
@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const FreeBoard = () => {
   const [posts, setPosts] = usePosts();
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
   React.useEffect(() => {
@@ -33,6 +34,16 @@ const FreeBoard = () => {
       />
     </TouchableOpacity>
   );
+  // 새로고침 기능
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    // Simulate a network request
+    setTimeout(() => {
+      // In a real app, you'd fetch new posts here
+      setPosts(prevPosts => [...prevPosts, ...initialPosts]); // 예시: 초기 게시물 추가
+      setRefreshing(false);
+    }, 2000);
+  }, [setPosts]);
 
   return (
     <View style={styles.container}>
@@ -60,14 +71,22 @@ const FreeBoard = () => {
         />
       </View>
       <View style={styles.overlay}>
-          <Text> </Text>
-        
+        <Text> </Text>
+
       </View>
       <FlatList
         data={posts}
         renderItem={renderItem}
         keyExtractor={item => item.id}
-        ItemSeparatorComponent={<View style={{ height: 5 }} />}
+        ItemSeparatorComponent={<View style={{ height: 5 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              colors={['#009688']} // 새로고침 인디케이터 색상
+              tintColor="#009688" // 새로고침 인디케이터 배경색
+            />
+          } />}
       />
     </View>
   );
@@ -98,7 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex:1,
+    zIndex: 1,
     elevation: 10,
     shadowOffset: { height: 5, width: 0 },
   },

@@ -113,6 +113,12 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.facebook.react:react-native:+"
+
+    // Add this line if not already present
+    implementation project(':react-native-maps')
+    implementation project(':react-native-geolocation-service')
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)

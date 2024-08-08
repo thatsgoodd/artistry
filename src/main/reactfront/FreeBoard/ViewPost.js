@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TextInput, ScrollView, KeyboardAvoidingView, Platform, SafeAreaView, TouchableOpacity, Keyboard } from 'react-native';
+import {
+  View, Text, Image, StyleSheet, ScrollView,
+  KeyboardAvoidingView, Platform, SafeAreaView,
+  TouchableOpacity, Modal, Keyboard
+} from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Entypo from '@expo/vector-icons/Entypo';
+import CommentSection from './CommentSection';  // Import the new component
+import { useNavigation } from '@react-navigation/native';
+
 
 const ViewPost = ({ route }) => {
   const { post } = route.params;
+  const navigation = useNavigation();
   const [likes, setLikes] = useState(post.likes);
   const [liked, setLiked] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
-
-  const commentAuthor = {
-    name: "John Doe",
-    profileImage: 'https://images.unsplash.com/photo-1506748686214e9df14f24d4f27d3d2d6b71d8b7ed98f0a'
-  };
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [imageModalVisible, setImageModalVisible] = useState(false);
+  const [contentModalVisible, setContentModalVisible] = useState(false);
+  const [menuModalVisible, setMenuModalVisible] = useState(false); 
   if (!post) {
     return (
       <View style={styles.container}>
@@ -24,17 +31,50 @@ const ViewPost = ({ route }) => {
     );
   }
 
-  const handleLike = () => {
-    setLikes(likes + (liked ? -1 : 1));
-    setLiked(!liked);
+  const handleLikeDislike = (item, setItem, itemLikedDisliked, setItemLikedDisliked) => {
+    setItem(item + (itemLikedDisliked ? -1 : 1));
+    setItemLikedDisliked(!itemLikedDisliked);
   };
 
   const handleAddComment = () => {
     if (newComment.trim()) {
-      setComments([...comments, { id: comments.length.toString(), text: newComment }]);
+      setComments([...comments, {
+        id: (comments.length + 1).toString(),
+        text: newComment,
+        likes: 0,
+        liked: false,
+        dislikes: 0,
+        disliked: false,
+        author: {
+          name: 'User',
+          profileImage: 'https://placekitten.com/200/200', // Replace with dynamic profile image
+        }
+      }]);
       setNewComment('');
       Keyboard.dismiss();
     }
+  };
+  const openContentModal = () => {
+    setContentModalVisible(true);
+  };
+
+  const closeContentModal = () => {
+    setContentModalVisible(false);
+  };
+
+  const handleEdit = () => {
+    navigation.navigate('EditPost', {
+      post,
+      onSave: updatedPost => {
+        // Handle the update logic here (e.g., update post in the state or API)
+        console.log('Post updated:', updatedPost);
+      }
+    });
+  };
+
+  const handleDelete = (postId) => {
+    // Handle the delete logic here (e.g., delete post from the state or API)
+    console.log('Post deleted:', postId);
   };
 
   return (
@@ -44,7 +84,9 @@ const ViewPost = ({ route }) => {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
-        <ScrollView contentContainerStyle={styles.contentContainer}>
+        <ScrollView
+          contentContainerStyle={styles.contentContainer}
+          keyboardShouldPersistTaps="handled">
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {post.profile ? (
               <Image
@@ -55,45 +97,125 @@ const ViewPost = ({ route }) => {
               />
             ) : null}
             <Text style={styles.profileText}>{post.name}</Text>
+            <TouchableOpacity onPress={() => setContentModalVisible(true)}>
+              <Entypo name="dots-three-vertical" size={10} color="black" style={{ left: 250 }} />
+            </TouchableOpacity>
           </View>
+          <Modal
+            animationType='fade'
+            transparent={true}
+            visible={contentModalVisible}
+            onRequestClose={() => setContentModalVisible(!contentModalVisible)}
+          >
+            <TouchableOpacity style={styles.contentModalView} onPress={() => setContentModalVisible(false)}>
+              <TouchableOpacity onPress={handleEdit}>
+                <Text style={[styles.contentModalButtonText, { paddingBottom: 5 }]}>수정하기</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  handleDelete(post.id);
+                  closeContentModal();
+                }}>
+                <Text style={[styles.contentModalButtonText, styles.borderTopWidth]}>삭제하기</Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </Modal>
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.content}>{post.content}</Text>
+          {post.photo && (
+            <TouchableOpacity onPress={() => setImageModalVisible(true)}>
+              <Image source={{ uri: post.photo }} style={styles.image} />
+            </TouchableOpacity>
+          )}
+          <Modal
+            visible={imageModalVisible}
+            transparent={true}
+            onRequestClose={() => setImageModalVisible(false)}
+          >
+            <View style={styles.modalContainer}>
+              <Image source={{ uri: post.photo }} style={styles.fullScreenImage} />
+            </View>
+          </Modal>
+
           <View style={[styles.flexDirection, styles.spaceBetween, styles.timeLikesComments]}>
             <Text style={styles.uploadTime}>{post.uploadTime}</Text>
             <View style={styles.flexDirection}>
-              <TouchableOpacity onPress={handleLike} style={styles.likeButton}>
+              <TouchableOpacity onPress={() => handleLikeDislike(likes, setLikes, liked, setLiked)} style={styles.likeButton}>
                 {liked ? (
-                  <FontAwesome name="thumbs-up" size={24} color="black" />
+                  <FontAwesome name="thumbs-up" size={18} color="#2b4872" />
                 ) : (
                   <Feather name="thumbs-up" size={18} color="#2b4872" />
                 )}
                 <Text style={{ marginLeft: 8 }}>{likes}</Text>
               </TouchableOpacity>
-              <Ionicons name="chatbubble-ellipses" size={18} color="#718BAE" style={{ marginLeft: 8 }} />
-              <Text style={{ marginLeft: 8 }}>{comments.length}</Text>
+              <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.likeButton}>
+                <Ionicons name="chatbubble-ellipses" size={18} color="#718BAE" style={{ marginLeft: 8 }} />
+                <Text style={{ marginLeft: 8 }}>{comments.length}</Text>
+              </TouchableOpacity>
             </View>
           </View>
-          <Text style={styles.commentsTitle}>댓글 ({comments.length})</Text>
-          {comments.map(comment => (
-            <View key={comment.id} style={styles.comment}>
-              <Image source={{ uri: commentAuthor.profileImage }} style={styles.commentProfileImage} />
-              <View style={styles.commentContent}>
-                <Text style={styles.commentAuthor}>{commentAuthor.name}</Text>
-                <Text>{comment.text}</Text>
+          <View style={styles.commentsContainer}>
+            {comments.map(comment => (
+              <View key={comment.id} style={styles.comment}>
+                <Image source={{ uri: comment.author.profileImage }} style={styles.commentProfileImage} />
+                <View style={styles.commentContent}>
+                  <Text style={styles.commentAuthor}>{comment.author.name}</Text>
+                  <Text>{comment.text}</Text>
+                  <View style={styles.flexDirection}>
+                    <TouchableOpacity onPress={() => handleLikeDislike(comment.likes, (newLikes) => {
+                      const newComments = [...comments];
+                      const index = newComments.findIndex(c => c.id === comment.id);
+                      newComments[index].likes = newLikes;
+                      setComments(newComments);
+                    }, comment.liked, (newLiked) => {
+                      const newComments = [...comments];
+                      const index = newComments.findIndex(c => c.id === comment.id);
+                      newComments[index].liked = newLiked;
+                      setComments(newComments);
+                    })} style={styles.likeButton}>
+                      {comment.liked ? (
+                        <Entypo name="thumbs-up" size={12} color="#2b4872" />
+                      ) : (
+                        <Feather name="thumbs-up" size={12} color="#2b4872" />
+                      )}
+                      <Text style={{ marginLeft: 10, marginRight: 15 }}>{comment.likes}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleLikeDislike(comment.dislikes, (newDislikes) => {
+                      const newComments = [...comments];
+                      const index = newComments.findIndex(c => c.id === comment.id);
+                      newComments[index].dislikes = newDislikes;
+                      setComments(newComments);
+                    }, comment.disliked, (newDisliked) => {
+                      const newComments = [...comments];
+                      const index = newComments.findIndex(c => c.id === comment.id);
+                      newComments[index].disliked = newDisliked;
+                      setComments(newComments);
+                    })} style={styles.likeButton}>
+                      {comment.disliked ? (
+                        <Entypo name="thumbs-down" size={12} color="#2b4872" />
+                      ) : (
+                        <Feather name="thumbs-down" size={12} color="#2b4872" />
+                      )}
+                      <Text style={{ marginHorizontal: 10 }}>{comment.dislikes}</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
               </View>
-            </View>
-          ))}
-          <View style={styles.addCommentSection}>
-            <TextInput
-              style={styles.commentInput}
-              placeholder="댓글을 입력하세요..."
-              value={newComment}
-              onChangeText={setNewComment}
-              onSubmitEditing={handleAddComment}
-              returnKeyType="send"
-            />
+            ))}
           </View>
+
         </ScrollView>
+        {/* CommentSection modal */}
+        <CommentSection
+          comments={comments}
+          setComments={setComments}
+          newComment={newComment}
+          setNewComment={setNewComment}
+          handleAddComment={handleAddComment}
+          modalVisible={modalVisible}
+          setModalVisible={setModalVisible}
+        />
+
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -155,46 +277,46 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  commentsTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
+  image: {
+    width: '100%',
+    height: 200,
+    marginBottom: 16,
   },
-  comment: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  commentProfileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  commentContent: {
+  modalContainer: {
     flex: 1,
-  },
-  commentAuthor: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  addCommentSection: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
-  commentInput: {
-    flex: 1,
-    borderColor: '#ccc',
+  fullScreenImage: {
+    width: '90%',
+    height: '80%',
+    resizeMode: 'contain',
+  },
+  contentModalView: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
     borderWidth: 1,
-    padding: 10,
-    borderRadius: 5,
-    marginRight: 10,
+    borderColor: '#d3dfee',
+    width: 163,
+    height: 78,
+    top: 120,
+    left: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 5
+  },
+  borderTopWidth: {
+    borderTopWidth: 1,
+    paddingTop: 5,
+    borderColor: '#d3dfee',
+    width: 130
+  },
+  contentModalButtonText: {
+    fontSize: 16,
+    color: '#2b4872',
+    textAlign: 'center'
   },
 });
 
