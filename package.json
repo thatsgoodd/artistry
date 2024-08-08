@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@react-navigation/native": "^6.1.18",
+    "firebase": "^10.12.5",
+    "react-native-splash-screen": "^3.3.0"
+  }
+}
