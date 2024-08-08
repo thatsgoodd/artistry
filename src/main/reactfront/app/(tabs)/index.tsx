@@ -35,7 +35,6 @@ const popular = [
 
 const index = () => {
     const handlePostPress = (postId) => {
-        // 해당 글의 상세 페이지로 이동
         alert(`Go to post ${postId}`);
       };
     
