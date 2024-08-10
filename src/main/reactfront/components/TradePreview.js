@@ -22,10 +22,10 @@ const staticTradePosts = [
   // 추가 포스트
 ];
 
-const TradeSection = ({ onPostPress }) => {
+const TradeSection = ({title, onPostPress }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>중고거래</Text>
+      <Text style={styles.title}>{title}</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scrollContainer}>
         {staticTradePosts.slice(0, 5).map((post) => (
           <TouchableOpacity key={post.id} style={styles.postContainer} onPress={() => onPostPress(post.id)}>

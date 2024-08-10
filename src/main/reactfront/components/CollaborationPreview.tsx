@@ -33,11 +33,11 @@ const staticSavedPosts = [
   // 추가 포스트
 ];
 
-const CollaborationPreview = ({ onPostPress }) => {
+const CollaborationPreview = ({ title, onPostPress }) => {
   return (
     <View style={styles.container}>
       {/* 협업 모집 제목 */}
-      <Text style={styles.mainTitle}>협업 모집</Text>
+      <Text style={styles.mainTitle}>{title}</Text>
 
       {/* 지역에 따른 최신 글 */}
       <View style={styles.sectionContainer}>

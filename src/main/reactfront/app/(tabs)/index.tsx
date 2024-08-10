@@ -4,6 +4,7 @@ import WorkSharePreview from "../../components/WorkSharePreview";
 import CollaborationPreview from '../../components/CollaborationPreview';
 import FreeboardPreview from "../../components/FreeboardPreview";
 import TradePreview from "../../components/TradePreview";
+import React from "react";
 
 const popular = [
     { id: '1', creatorName: 'User1', creatorPage: '/users/1', itemPage: '/items/1', imageUrl: 'https://via.placeholder.com/150' },
@@ -51,8 +52,8 @@ const index = () => {
             ]}
           />
           <FreeboardPreview title="자유게시판" posts={allFreeboardPosts} onPostPress={handlePostPress} />
-          <CollaborationPreview title="협업 모집" posts={allFreeboardPosts} onPostPress={handlePostPress} />
-          <TradePreview title="중고 거래"/>
+          <CollaborationPreview title="협업 모집" onPostPress={handlePostPress} />
+          <TradePreview title="중고 거래" onPostPress={undefined}/>
         </ScrollView>
       </SafeAreaView>
     </SafeAreaProvider>

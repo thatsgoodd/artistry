@@ -1,7 +1,7 @@
-// app/ChatPreviewScreen.js
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 const initialCollaborativeChats = [
   { id: '1', profileImage: 'https://via.placeholder.com/50', title: '팀 프로젝트 A', content: '팀원들이 필요한 기능을 논의하는 채팅입니다.', time: '2시간 전', unreadCount: 2 },
@@ -24,11 +24,17 @@ const CollaborationChat = () => {
   }, []);
 
   const handleChatPress = (chatId) => {
-    router.push(`/chat/collaborative/${chatId}`);
+    router.push({
+      pathname: `/chat/collaborative/${chatId}`,
+      params: { chatId: chatId },  // 여기서 `chatId`를 전달
+    });
   };
+  
+  
 
-  const renderItem = ({ item }) => (
-    <View>
+  const renderItem = ({ item, index }) => (
+
+      <View>
       <TouchableOpacity style={styles.chatItem} onPress={() => handleChatPress(item.id)}>
         <Image source={{ uri: item.profileImage }} style={styles.profileImage} />
         <View style={styles.chatContent}>
@@ -42,14 +48,20 @@ const CollaborationChat = () => {
           </View>
         )}
       </TouchableOpacity>
-      <DottedDivider />
-    </View>
+      
+      {/* 점선을 마지막 항목 뒤에는 렌더링하지 않음 */}
+      {index < chats.length - 1 && <DottedDivider />}
+      </View>
   );
 
   return (
-    <View style={styles.container}>
-      {/* Chat Header */}
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()}>
+          <Ionicons name="arrow-back" size={24} color="#2B4872" />
+        </TouchableOpacity>
+      </View>
+      <View>
         <Text style={styles.headerTitle}>채팅</Text>
       </View>
 
@@ -64,12 +76,11 @@ const CollaborationChat = () => {
           data={chats}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          inverted
           onRefresh={handleRefresh}
           refreshing={refreshing}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -84,16 +95,23 @@ const DottedDivider = () => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 10,
+    backgroundColor: "#fff",
+    paddingVertical: 10,
   },
+
   header: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingBottom: 10,
+    paddingHorizontal: 15,
   },
   headerTitle: {
+    left: 7,
+    paddingVertical: 10,
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2B4872',
+    fontWeight: "bold",
+    color: "#2B4872",
+    marginHorizontal: 20,
   },
   sectionContainer: {
     shadowColor: "#000",
@@ -101,29 +119,36 @@ const styles = StyleSheet.create({
       width: 0,
       height: 5,
     },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 6.27,
     elevation: 10,
     marginBottom: 20,
+    height: 750,
     borderRadius: 10,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
+    width: "100%",
+    paddingHorizontal: 5,
   },
   sectionHeader: {
     borderRadius: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 15,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    backgroundColor: "#fff",
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2B4872',
+    fontWeight: "bold",
+    color: "#2B4872",
+  },
+  addButton: {
+    padding: 5,
   },
   chatItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingHorizontal: 15,
   },
   profileImage: {

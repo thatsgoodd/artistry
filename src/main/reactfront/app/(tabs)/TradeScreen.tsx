@@ -1,9 +1,13 @@
+// TradeScreen.js
+
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, SafeAreaView, TouchableOpacity } from 'react-native';
-import PagerView from 'react-native-pager-view';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Ionicons } from '@expo/vector-icons';
 
+// 데이터
 const postsData = {
   seoul: [
     {
@@ -29,7 +33,8 @@ const postsData = {
   ],
 };
 
-const TradeScreen = () => {
+// 화면 컴포넌트들
+const TradePosts = () => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -116,36 +121,37 @@ const SellHistoryScreen = () => (
   </View>
 );
 
+const Tab = createMaterialTopTabNavigator();
+
+function MyTabs() {
+  return (
+    <Tab.Navigator
+      initialRouteName="TradePosts"
+      screenOptions={{
+        tabBarActiveTintColor: '#e91e63',
+        tabBarLabelStyle: { fontSize: 12 },
+        tabBarStyle: { backgroundColor: 'powderblue' },
+      }}
+    >
+      <Tab.Screen name="TradePosts" component={TradePosts} options={{ tabBarLabel: '거래' }} />
+      <Tab.Screen name="Interests" component={InterestScreen} options={{ tabBarLabel: '관심 내역' }} />
+      <Tab.Screen name="BuyHistory" component={BuyHistoryScreen} options={{ tabBarLabel: '구매 내역' }} />
+      <Tab.Screen name="SellHistory" component={SellHistoryScreen} options={{ tabBarLabel: '판매 내역' }} />
+    </Tab.Navigator>
+  );
+}
+
 const App = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <PagerView style={styles.pagerView} initialPage={0}>
-        <View key="1" style={styles.page}><TradeScreen /></View>
-        <View key="2" style={styles.page}><InterestScreen /></View>
-        <View key="3" style={styles.page}><BuyHistoryScreen /></View>
-        <View key="4" style={styles.page}><SellHistoryScreen /></View>
-      </PagerView>
-
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.iconButton}>
-          <Ionicons name="menu-outline" size={24} color="#2B4872" />
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    <NavigationContainer>
+      <MyTabs />
+    </NavigationContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  pagerView: {
-    flex: 1,
-  },
-  page: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   header: {
     flexDirection: 'row',
@@ -185,6 +191,51 @@ const styles = StyleSheet.create({
   },
   dropDownPlaceholder: {
     fontSize: 10,
+  },
+  postContainer: {
+    margin: 10,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  postImage: {
+    width: '100%',
+    height: 150,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  postContent: {
+    padding: 10,
+  },
+  postTitle: {
+    fontWeight: 'bold',
+  },
+  postDescription: {
+    marginTop: 5,
+    color: '#666',
+  },
+  postTime: {
+    marginTop: 5,
+    fontSize: 12,
+    color: '#999',
+  },
+  profileContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  profileImage: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    marginRight: 10,
+  },
+  postAuthor: {
+    fontWeight: 'bold',
   },
   screen: {
     flex: 1,

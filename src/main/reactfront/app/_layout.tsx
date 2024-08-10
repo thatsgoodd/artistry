@@ -1,10 +1,8 @@
-// app/_layout.js
 import React, { useEffect } from "react";
-import { Stack, useNavigation } from "expo-router";
-import { Image, StyleSheet, View } from "react-native";
+import { Stack, Tabs, useNavigation } from "expo-router";
+import { View, StyleSheet, Image } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
-import "react-native-reanimated";
-import IconButton from "../components/IconButton";
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -14,11 +12,7 @@ export default function RootLayout() {
   useEffect(() => {
     async function prepare() {
       try {
-        // 필요한 초기 작업을 수행
-        // 예: 데이터 로드, 폰트 로드 등
-
-        // 모든 작업이 완료되면 스플래시 스크린 숨기기
-        await SplashScreen.hideAsync();
+        await SplashScreen.hideAsync(); // 모든 작업이 완료되면 스플래시 스크린 숨기기
       } catch (e) {
         console.warn(e);
       }
@@ -28,73 +22,39 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <Stack>
-      <Stack.Screen
-        name="(tabs)"
-        options={{
-          headerTitle: (props) => (
-            <Image
-              style={{ width: 150, height: 40 }}
-              source={require("../assets/images/HomeHeader.png")}
-              resizeMode="contain"
-            />
-          ),
-          headerRight: () => {
-            return (
-              <View style={styles.headerRightContainer}>
-                <IconButton
-                  icon="chatbubble-ellipses-outline"
-                  color="black"
-                  onPress={() => navigation.navigate("ChatPreview")}
-                />
-                <IconButton
-                  icon="notifications-outline"
-                  color="black"
-                  onPress={() => navigation.navigate("Notification")}
-                />
-              </View>
-            );
-          },
-          headerShadowVisible: false,
+    <View style={{ flex: 1 }}>
+      <Stack
+        screenOptions={{
+          headerShown: false, // 모든 스크린에서 헤더 숨기기
         }}
-      />
-      <Stack.Screen
-        name="ChatPreview"
-        options={{
-          headerTitle: "", // 변경할 헤더 제목
-          headerStyle: { backgroundColor: "#f5f5f5" }, // 변경할 헤더 스타일
-          headerTintColor: "#333", // 헤더의 텍스트 색상
-          headerBackTitleVisible: "false",
-        }}
-      />
-      <Stack.Screen
-        name="Notification"
-        options={{
-          headerTitle: "", // 변경할 헤더 제목
-          headerStyle: { backgroundColor: "#f5f5f5" }, // 변경할 헤더 스타일
-          headerTintColor: "#333", // 헤더의 텍스트 색상
-          headerBackTitleVisible: "false",
-        }}
-      />
-      <Stack.Screen name="+not-found" />
-    </Stack>
+      >
+        {/* 탭 내에서 스크린 설정 */}
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+            // 홈 화면에 대한 추가 설정 (헤더를 다시 보여주려면 여기서 설정)
+          }}
+        />
+       
+        <Stack.Screen
+          name="+not-found"
+          options={{
+            headerShown: false, // not-found 화면에서 헤더 숨기기
+          }}
+        />
+      </Stack>
+
+      {/* 메뉴 바는 항상 화면 하단에 표시됩니다 */}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    width: 200,
-    height: 50,
-  },
   headerRightContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     width: 80,
     paddingRight: 10,
-  },
-  headerBottomBorder: {
-    borderBottomWidth: 5,
-    borderBottomColor: "#47315a",
   },
 });

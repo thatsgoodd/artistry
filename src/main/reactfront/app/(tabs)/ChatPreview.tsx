@@ -1,8 +1,8 @@
-// app/ChatPreviewScreen.js
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const staticCollaborativeChats = [
   { id: '1', profileImage: 'https://via.placeholder.com/50', title: '팀 프로젝트 A', content: '팀원들이 필요한 기능을 논의하는 채팅입니다.', time: '2시간 전', unreadCount: 2 },
@@ -16,15 +16,16 @@ const staticTradeChats = [
   { id: '3', profileImage: 'https://via.placeholder.com/50', title: '중고 물건 C', content: '추가적인 질문과 답변이 포함된 채팅입니다.', time: '5일 전', unreadCount: 0 },
 ];
 
-const ChatPreviewScreen = () => {
+const ChatPreview = () => {
   const router = useRouter();
 
   const handleChatPress = (chatId, type) => {
+    // 경로 확인 및 수정
     router.push(`/chat/${type}/${chatId}`);
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/* Chat Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>채팅</Text>
@@ -34,13 +35,13 @@ const ChatPreviewScreen = () => {
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>협업 모집</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/CollaborationChat')}>
-            <Ionicons name="add-outline" size={24} color="#2B4872" />
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/Chat/CollaborationChat')}>
+            <Ionicons name="add-outline" size={20} color="#2B4872" />
           </TouchableOpacity>
         </View>
         {staticCollaborativeChats.slice(0, 3).map((chat, index) => (
           <React.Fragment key={chat.id}>
-            <TouchableOpacity style={styles.chatItem} onPress={() => handleChatPress(chat.id, 'collaborative')}>
+            <TouchableOpacity style={styles.chatItem} onPress={() => handleChatPress(chat.id, 'collaboration')}>
               <Image source={{ uri: chat.profileImage }} style={styles.profileImage} />
               <View style={styles.chatContent}>
                 <Text style={styles.chatTitle}>{chat.title}</Text>
@@ -62,8 +63,8 @@ const ChatPreviewScreen = () => {
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>중고 거래</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/trade-chats')}>
-            <Ionicons name="add-outline" size={24} color="#2B4872" />
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/Chat/TradeChat')}>
+            <Ionicons name="add-outline" size={20} color="#2B4872" />
           </TouchableOpacity>
         </View>
         {staticTradeChats.slice(0, 3).map((chat, index) => (
@@ -85,7 +86,7 @@ const ChatPreviewScreen = () => {
           </React.Fragment>
         ))}
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -101,18 +102,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 10,
+    paddingVertical: 10,
   },
   header: {
     paddingBottom: 10,
   },
   headerTitle: {
-   left: 7,
-   paddingVertical: 10,
+    left: 7,
+    paddingVertical: 10,
     fontSize: 24,
     fontWeight: 'bold',
     color: '#2B4872',
-
+    marginHorizontal: 20,
   },
   sectionContainer: {
     shadowColor: "#000",
@@ -120,13 +121,15 @@ const styles = StyleSheet.create({
       width: 0,
       height: 5,
     },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.1,
     shadowRadius: 6.27,
     elevation: 10,
     marginBottom: 20,
-    height:350,
+    height: 330,
     borderRadius: 10,
     backgroundColor: '#fff',
+    width: '100%',
+    paddingHorizontal: 5,
   },
   sectionHeader: {
     borderRadius: 10,
@@ -135,8 +138,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 15,
     backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
   sectionTitle: {
     fontSize: 18,
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
   chatItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 6,
     paddingHorizontal: 15,
   },
   profileImage: {
@@ -198,4 +199,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatPreviewScreen;
+export default ChatPreview;
