@@ -11,17 +11,11 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    public void sendSimpleMessage(String to, String subject, String text) {
+    public void sendVerificationEmail(String to, String subject, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(to);
         message.setSubject(subject);
         message.setText(text);
         mailSender.send(message);
-    }
-
-    public void sendVerificationEmail(String to, String verificationUrl) {
-        String subject = "Email Verification";
-        String text = "Please click the following link to verify your email: " + verificationUrl;
-        sendSimpleMessage(to, subject, text);
     }
 }

@@ -1,22 +1,28 @@
 server:
   port: 8081
+  tomcat:
+    max-threads: 200000
+    min-spare-threads: 10
+    accept-count: 100
+    max-connections: 10000000
+    max-keep-alive-requests: 1000000
+    connection-timeout: 20000000000
+    max-swallow-size: -1
+    max-http-header-size: 32768
 
 spring:
   security:
-  # H2 Database 설정
   datasource:
     driver-class-name: org.h2.Driver
     url: 'jdbc:h2:tcp://localhost/~/artistry'
     username: sa
     password:
 
-  # H2 Console 설정
   h2:
     console:
       enabled: true
       path: /h2-console
 
-  # JPA 설정
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -26,8 +32,8 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
         show_sql: true
+        use_sql_comments: true
 
-  # JMX 설정
   jmx:
     enabled: true
     server:
@@ -35,17 +41,19 @@ spring:
       ssl: false
       authenticate: false
 
-  # 이메일 설정
-  spring:
-    mail:
-      host: ${MAIL_HOST}
-      port: ${MAIL_PORT}
-      username: ${MAIL_USERNAME}
-      password: ${MAIL_PASSWORD}
-      properties:
-        mail:
-          smtp:
-            auth: true
-            starttls:
-              enable: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: dltndus5985@gmail.com
+    password: emcx wtls mqcc faqx
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
 
+logging:
+  level:
+    root: DEBUG
+    org.springframework.web: TRACE
+    org.hibernate: DEBUG
+    com.artistry.artistry: DEBUG
+    org.apache.coyote: TRACE
