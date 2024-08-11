@@ -13,6 +13,7 @@ import DeletePost from './DeletePost';
 import MenuModal from './MenuModal'; // MenuModal 컴포넌트 임포트
 import Search from '../Search/SearchMain';
 import SearchScreen from './SearchScreen';
+import MyCommentedPosts from '../Comments/MyCommentedPosts';
 
 const Stack = createNativeStackNavigator();
 
@@ -44,7 +45,7 @@ const App = () => {
   });
 
   return (
-    <PostProvider>
+
       <NavigationContainer independent={true}>
         <Stack.Navigator>
           <Stack.Screen
@@ -78,6 +79,7 @@ const App = () => {
           <Stack.Screen name="EditPost" component={EditPost} />
           <Stack.Screen name="DeletePost" component={DeletePost} />
           <Stack.Screen name="Search" component={Search}/>
+          <Stack.Screen name="MyCommentedPosts" component={MyCommentedPosts}/>
           <Stack.Screen 
           name="SearchScreen" 
           component={SearchScreen}
@@ -95,7 +97,7 @@ const App = () => {
           setModalVisible={() => setMenuModalVisible(false)}
         />
       </NavigationContainer>
-    </PostProvider>
+  
   );
 };
 

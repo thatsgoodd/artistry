@@ -1,4 +1,3 @@
-// CommentSection.js
 import React from 'react';
 import {
   View, Text, Image, TextInput, StyleSheet,
@@ -8,12 +7,18 @@ import {
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
+import { useCommentedPosts } from './CommentedPostsContext';
 
-const CommentSection = ({ comments, setComments, newComment, setNewComment, handleAddComment, modalVisible, setModalVisible }) => {
+const CommentSection = ({
+  comments, setComments, newComment, setNewComment,
+  handleAddComment, modalVisible, setModalVisible, post
+}) => {
   const commentAuthor = {
     name: "John Doe",
     profileImage: 'https://plus.unsplash.com/premium_photo-1668447592220-9845a3c0e768?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   };
+
+  const { addCommentedPost } = useCommentedPosts();
 
   const handleLikeDislike = (comment, setComment, isLiked, setIsLiked) => {
     setComment({
@@ -24,23 +29,13 @@ const CommentSection = ({ comments, setComments, newComment, setNewComment, hand
     setIsLiked(!isLiked);
   };
 
+  const handleAddCommentAndTrack = () => {
+    handleAddComment();
+    addCommentedPost(post); // 댓글을 추가할 때 게시물을 추적
+  };
+
   return (
     <>
-      <View style={styles.addCommentSection}>
-        <Text style={styles.commentsTitle}>댓글 {comments.length}</Text>
-        <View style={{ flexDirection: 'row' }}>
-          <Image source={{ uri: commentAuthor.profileImage }} style={styles.commentProfileImage} />
-          <TextInput
-            style={styles.commentInput}
-            placeholder="댓글 작성하기"
-            value={newComment}
-            onChangeText={setNewComment}
-            onSubmitEditing={handleAddComment}
-            returnKeyType="send"
-          />
-        </View>
-      </View>
-
       <Modal
         animationType="slide"
         transparent={true}
@@ -103,7 +98,7 @@ const CommentSection = ({ comments, setComments, newComment, setNewComment, hand
                   placeholder="댓글 작성하기"
                   value={newComment}
                   onChangeText={setNewComment}
-                  onSubmitEditing={handleAddComment}
+                  onSubmitEditing={handleAddCommentAndTrack} // 댓글 작성 시 추가된 함수 호출
                   returnKeyType="send"
                 />
               </View>

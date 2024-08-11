@@ -1,138 +1,134 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
-import PostItem from '../postItem'; // PostItem 컴포넌트 가져오기
-import { posts as initialPosts } from '../data/posts'; // 데이터 파일에서 가져오기
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage 가져오기
+import { posts as initialPosts } from '../WorkSharing/posts'; // 새로운 데이터 소스에서 가져오기
+import FilterSearch from './WSFilterSearch'; // FilterSearch 컴포넌트 가져오기
+import SearchContainer from '../Search/SearchContainer';
+
+const SEARCH_HISTORY_KEY = 'SEARCH_HISTORY'; // AsyncStorage에서 사용할 키
+
+// PostItem 컴포넌트 정의
+const PostItem = ({ post }) => {
+  return (
+    <View style={styles.postItemContainer}>
+      <Image source={{ uri: post.profile }} style={styles.profileImage} />
+      <View style={styles.postDetails}>
+        <Text style={styles.title}>{post.title}</Text>
+        <Text style={styles.name}>{post.name}</Text>
+        <Text style={styles.content}>{post.content}</Text>
+        <View style={styles.photosContainer}>
+          {post.photos.map((photo, index) => (
+            <Image key={index} source={{ uri: photo }} style={styles.photo} />
+          ))}
+        </View>
+        <View style={styles.statsContainer}>
+          <Text style={styles.statText}>Bookmarks: {post.bookmarkCount}</Text>
+          <Text style={styles.statText}>Likes: {post.likes}</Text>
+        </View>
+      </View>
+    </View>
+  );
+};
 
 function SearchBar() {
   const [search, setSearch] = useState('');
   const [searchHistory, setSearchHistory] = useState([]);
-  const [filter, setFilter] = useState('모든작업');
-  const [sortOrder, setSortOrder] = useState('최신순');
-  const [popularity, setPopularity] = useState('좋아요많은순');
-  const [showFilterOptions, setShowFilterOptions] = useState(false);
-  const [showSortOrderOptions, setShowSortOrderOptions] = useState(false);
-  const [showPopularityOptions, setShowPopularityOptions] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [isSearchComplete, setIsSearchComplete] = useState(false); // 검색 완료 상태 추가
+
+  // 필터 상태를 FilterSearch에서 관리할 수 있도록 상태를 설정합니다.
+  const [filters, setFilters] = useState({
+    selectedPeriod: '',
+    selectedType: '',
+    selectedPopularity: '',
+  });
 
   // 검색어에 따른 필터링
-  const filteredPosts = initialPosts ? initialPosts.filter(post =>
-    post.title.toLowerCase().includes(search.toLowerCase()) ||
-    post.message.toLowerCase().includes(search.toLowerCase())
-  ) : [];
-  
+  const filteredPosts = initialPosts ? initialPosts.filter(post => {
+    const matchesSearchQuery = post.title.toLowerCase().includes(search.toLowerCase()) ||
+      post.content.toLowerCase().includes(search.toLowerCase());
 
-  const handleSearch = () => {
-    if (search.trim() !== '' && !searchHistory.includes(search)) {
-      setSearchHistory([...searchHistory, search]);
+    const matchesPeriod = filters.selectedPeriod ? post.period === filters.selectedPeriod : true;
+    const matchesType = filters.selectedType ? post.categoryId === filters.selectedType : true;
+    const matchesPopularity = filters.selectedPopularity ? post.bookmarkCount === filters.selectedPopularity : true;
+
+    return matchesSearchQuery && matchesPeriod && matchesType && matchesPopularity;
+  }) : [];
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 검색 기록을 불러옴
+    const loadSearchHistory = async () => {
+      try {
+        const history = await AsyncStorage.getItem(SEARCH_HISTORY_KEY);
+        if (history) {
+          setSearchHistory(JSON.parse(history));
+        }
+      } catch (error) {
+        console.error('Error loading search history', error);
+      }
+    };
+
+    loadSearchHistory();
+  }, []);
+
+  useEffect(() => {
+    // 검색어가 비어 있지 않을 때 검색 상태를 true로 설정, 검색 완료 상태를 false로 설정
+    if (search.trim() !== '') {
+      setIsSearching(true);
+      setIsSearchComplete(false); // 검색 완료 상태 초기화
+    } else {
+      setIsSearching(false);
     }
-    setIsSearching(true);
+  }, [search]);
+
+  const handleSearch = async () => {
+    if (search.trim() !== '' && !searchHistory.includes(search)) {
+      const newHistory = [...searchHistory, search];
+      setSearchHistory(newHistory);
+      try {
+        await AsyncStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(newHistory));
+      } catch (error) {
+        console.error('Error saving search history', error);
+      }
+    }
+    setIsSearchComplete(true); // 검색 완료 상태로 설정
+    setIsSearching(false); // 검색 완료 시 검색 상태 false로 설정
   };
 
-  const clearHistory = () => {
+  const clearHistory = async () => {
     setSearchHistory([]);
+    try {
+      await AsyncStorage.removeItem(SEARCH_HISTORY_KEY);
+    } catch (error) {
+      console.error('Error clearing search history', error);
+    }
   };
 
-  const removeItem = (item) => {
-    setSearchHistory(searchHistory.filter(history => history !== item));
+  const removeItem = async (item) => {
+    const newHistory = searchHistory.filter(history => history !== item);
+    setSearchHistory(newHistory);
+    try {
+      await AsyncStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(newHistory));
+    } catch (error) {
+      console.error('Error updating search history', error);
+    }
   };
 
-  const toggleFilterOptions = () => {
-    setShowFilterOptions(!showFilterOptions);
-    setShowSortOrderOptions(false);
-    setShowPopularityOptions(false);
-  };
-
-  const toggleSortOrderOptions = () => {
-    setShowSortOrderOptions(!showSortOrderOptions);
-    setShowFilterOptions(false);
-    setShowPopularityOptions(false);
-  };
-
-  const togglePopularityOptions = () => {
-    setShowPopularityOptions(!showPopularityOptions);
-    setShowFilterOptions(false);
-    setShowSortOrderOptions(false);
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchBar}>
-        <Image source={require('../assets/images/useReactfront/search.png')} />
-        <TextInput
-          placeholder="검색"
-          onChangeText={(text) => {
-            setSearch(text);
-            setIsSearching(text.trim() !== '');
-          }}
-          value={search}
-          style={styles.textInput}
-          onSubmitEditing={handleSearch}
-        />
+      <SearchContainer
+        searchText={search}
+        onChangeText={setSearch}
+        onSubmitEditing={handleSearch}
+      />
 
-      </View>
-
+      {/* 검색어 입력 중일 때만 최근 검색 기록 표시 */}
       {isSearching && (
         <>
-          <View style={styles.dropdownContainer}>
-            <View style={styles.dropdown}>
-              <TouchableOpacity onPress={toggleSortOrderOptions} style={styles.dropdownLabelContainer}>
-                <Text style={styles.dropdownLabel}>▼</Text>
-                <Text style={styles.dropdownText}>{sortOrder}</Text>
-              </TouchableOpacity>
-              {showSortOrderOptions && (
-                <View style={styles.optionsContainer}>
-                  <TouchableOpacity onPress={() => { setSortOrder('최신순'); setShowSortOrderOptions(false); }} style={styles.optionContainer}>
-                    <Text style={styles.option}>최신순</Text>
-                  </TouchableOpacity>
-                  <View style={styles.separator} />
-                  <TouchableOpacity onPress={() => { setSortOrder('오래된순'); setShowSortOrderOptions(false); }} style={styles.optionContainer}>
-                    <Text style={styles.option}>오래된순</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.dropdown}>
-              <TouchableOpacity onPress={toggleFilterOptions} style={styles.dropdownLabelContainer}>
-                <Text style={styles.dropdownLabel}>▼</Text>
-                <Text style={styles.dropdownText}>{filter}</Text>
-              </TouchableOpacity>
-              {showFilterOptions && (
-                <View style={styles.optionsContainer}>
-                  <TouchableOpacity onPress={() => { setFilter('모든작업'); setShowFilterOptions(false); }} style={styles.optionContainer}>
-                    <Text style={styles.option}>모든작업</Text>
-                  </TouchableOpacity>
-                  <View style={styles.separator} />
-                  <TouchableOpacity onPress={() => { setFilter('동영상'); setShowFilterOptions(false); }} style={styles.optionContainer}>
-                    <Text style={styles.option}>동영상</Text>
-                  </TouchableOpacity>
-                  <View style={styles.separator} />
-                  <TouchableOpacity onPress={() => { setFilter('사진'); setShowFilterOptions(false); }} style={styles.optionContainer}>
-                    <Text style={styles.option}>사진</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.dropdown}>
-              <TouchableOpacity onPress={togglePopularityOptions} style={styles.dropdownLabelContainer}>
-                <Text style={styles.dropdownLabel}>▼</Text>
-                <Text style={styles.dropdownText}>{popularity}</Text>
-              </TouchableOpacity>
-              {showPopularityOptions && (
-                <View style={styles.optionsContainer}>
-                  <TouchableOpacity onPress={() => { setPopularity('좋아요많은순'); setShowPopularityOptions(false); }} style={styles.optionContainer}>
-                    <Text style={styles.option}>좋아요많은순</Text>
-                  </TouchableOpacity>
-                  <View style={styles.separator} />
-                  <TouchableOpacity onPress={() => { setPopularity('스크랩많은순'); setShowPopularityOptions(false); }} style={styles.optionContainer}>
-                    <Text style={styles.option}>스크랩많은순</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-            </View>
-          </View>
-
           <FlatList
             data={searchHistory}
             renderItem={({ item }) => (
@@ -145,7 +141,13 @@ function SearchBar() {
             )}
             keyExtractor={(item) => item}
           />
+        </>
+      )}
 
+      {/* 검색 완료 후 필터 및 필터링된 게시물 표시 */}
+      {isSearchComplete && (
+        <>
+          <FilterSearch onFilterChange={handleFilterChange}/>
           <FlatList
             data={filteredPosts}
             renderItem={({ item }) => <PostItem post={item} />}
@@ -160,7 +162,8 @@ function SearchBar() {
         </>
       )}
 
-      {!isSearching && (
+      {/* 검색어가 비어 있을 때만 추천 검색 및 인기 검색 표시 */}
+      {!isSearching && !isSearchComplete && search.trim() === '' && (
         <View style={styles.bottomContainer}>
           <Text style={styles.color}>추천 검색</Text>
           <View style={{ flexDirection: 'row' }}>
@@ -210,51 +213,6 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     borderColor: '#d3dfee',
   },
-  dropdownContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
-  dropdown: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  dropdownLabelContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#d3dfee',
-  },
-  dropdownLabel: {
-    marginRight: 10,
-    fontSize: 18,
-  },
-  dropdownText: {
-    flex: 1,
-    textAlign: 'center',
-  },
-  optionsContainer: {
-    backgroundColor: 'white',
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#d3dfee',
-    marginTop: 5,
-    paddingVertical: 5,
-  },
-  optionContainer: {
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-  },
-  option: {
-    fontSize: 16,
-  },
-  separator: {
-    height: 1,
-    backgroundColor: '#d3dfee',
-  },
   historyItem: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
@@ -276,43 +234,54 @@ const styles = StyleSheet.create({
     width: 190,
     height: 160,
   },
-  postContainer: {
+  postItemContainer: {
+    flexDirection: 'row',
+    marginVertical: 10,
+    padding: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  postDetails: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  name: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 5,
+  },
+  content: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 10,
+  },
+  photosContainer: {
     flexDirection: 'row',
     marginBottom: 10,
   },
-  image: {
+  photo: {
     width: 100,
     height: 100,
     borderRadius: 10,
-  },
-  detailsContainer: {
-    flexDirection: 'row',
-    marginLeft: 10,
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-  },
-  textContainer: {
-    marginLeft: 10,
-    flex: 1,
-  },
-  title: {
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  content: {
-    marginTop: 5,
-    fontSize: 14,
-  },
-  infoContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-  infoText: {
     marginRight: 10,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  statText: {
     fontSize: 12,
+    color: '#555',
   },
 });
 

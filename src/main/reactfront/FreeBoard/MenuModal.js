@@ -25,7 +25,7 @@ const MenuModal = ({ modalVisible, setModalVisible }) => {
                 <Text style={styles.modalButtonText}>전체글</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => console.log('댓글쓴글 pressed')}
+                onPress={() => navigation.navigate('MyCommentedPosts')}
                 style={styles.modalButton}
               >
                 <Text style={styles.modalButtonText}>댓글쓴글</Text>

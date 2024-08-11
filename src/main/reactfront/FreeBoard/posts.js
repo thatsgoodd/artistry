@@ -7,7 +7,7 @@ const initialPosts = [
     uploadTime: '10:00',
     likes: 15,
     comments: 5,
-    photo: 'https://pin.it/jWihXKPUl',
+    
     profile: 'https://i.pinimg.com/564x/f7/58/d1/f758d179886f5a81f47eef9e7605d9b9.jpg'
   },
   {
@@ -33,6 +33,7 @@ const initialPosts = [
   {
     id: '4',
     title: '네 번째 글 제목',
+    name:'why',
     content: '이것은 네 번째 글의 내용입니다. 간단한 예제입니다.',
     uploadTime: '22:12',
     likes: 22,

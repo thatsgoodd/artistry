@@ -2,63 +2,18 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Modal, Alert, TouchableWithoutFeedback } from 'react-native';
 import { usePosts } from './PostContext';
-import * as ImagePicker from 'expo-image-picker';
+import { usePhotoPicker } from '../PhotoPicker'; // 사진 선택 기능 훅 가져오기
+
 
 const WritePost = ({ navigation }) => {
   const [posts, setPosts] = usePosts();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
-  const [photo, setPhoto] = useState(null);
+  const [previewPhoto, setPreviewPhoto] = useState(null); // 미리보기 사진 상태
+  const { photo, handleCameraLaunch, handleImageLibraryLaunch } = usePhotoPicker(setPreviewPhoto); // 선택된 사진의 URI를 상태로 업데이트
 
-  const requestPermissions = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('권한 오류', '미디어 라이브러리 접근 권한이 필요합니다.');
-    }
-  };
-
-  const requestCameraPermissions = async () => {
-    const { status } = await ImagePicker.requestCameraPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('권한 오류', '카메라 접근 권한이 필요합니다.');
-    }
-  };
-
-  const handleCameraLaunch = async () => {
-    await requestCameraPermissions();
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setPhoto({ uri: result.assets[0].uri });
-      console.log(result.assets[0].uri);
-    } else {
-      Alert.alert('사진 촬영 취소');
-    }
-  };
-
-  const handleImageLibraryLaunch = async () => {
-    await requestPermissions();
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setPhoto({ uri: result.assets[0].uri });
-      console.log(result.assets[0].uri);
-    } else {
-      Alert.alert('이미지 선택 취소');
-    }
-  };
-
+  
   const handleSubmit = () => {
     if (title.trim() === '' || content.trim() === '') {
       Alert.alert('입력 오류', '제목과 내용을 모두 입력해 주세요.');
@@ -77,7 +32,7 @@ const WritePost = ({ navigation }) => {
       uploadTime: formatDate(new Date()),
       likes: 0,
       comments: 0,
-      photo: photo ? photo.uri : null,
+      photo: previewPhoto ? previewPhoto : null,
     };
 
     setPosts(prevPosts => [...prevPosts, newPost]);
@@ -88,14 +43,14 @@ const WritePost = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>제목</Text>
+      
       <TextInput
         style={styles.input}
         value={title}
         onChangeText={setTitle}
         placeholder="제목을 입력하세요"
       />
-      <Text style={styles.label}>내용</Text>
+     
       <TextInput
         style={styles.input}
         value={content}
@@ -112,8 +67,8 @@ const WritePost = ({ navigation }) => {
           <Text style={styles.photoButtonText}>사진</Text>
         </TouchableOpacity>
         <View style={styles.imageContainer}>
-          {photo && (
-            <Image source={{ uri: photo.uri }} style={styles.image} />
+          {previewPhoto && (
+            <Image source={{ uri: previewPhoto }} style={styles.image} />
           )}
         </View>
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -154,12 +109,9 @@ const styles = StyleSheet.create({
     width: 100,
     marginVertical: 16,
   },
-  label: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 8,
-    zIndex:2
-  },
+ photoAndSubmitButton:{
+
+ },
   overlay: {
     position: 'absolute',
     top: 55,
@@ -175,15 +127,13 @@ const styles = StyleSheet.create({
   },
   input: {
     backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 8,
     padding: 8,
     marginBottom: 16,
-    zIndex:2
+    zIndex:2,
+    top:70
   },
   photoButton: {
-    paddingVertical: 12,
+  
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 16,
@@ -191,17 +141,21 @@ const styles = StyleSheet.create({
     width: 59,
     height: 31,
     borderColor: '#d3dfee',
-    borderWidth: 1
+    borderWidth: 1,
+    
+    top:65
   },
   photoButtonText: {
     fontSize: 15,
-    color: '#2b4872'
+    color: '#2b4872',
+  
   },
   modalButton: {
     backgroundColor: '#ffffff',
     borderRadius: 8,
     alignItems: 'center',
     marginVertical: 8,
+    
   },
   modalButtonText: {
     color: '#2b4872',
@@ -214,7 +168,8 @@ const styles = StyleSheet.create({
     width: 59,
     height: 31,
     borderColor: '#d3dfee',
-    borderWidth: 1
+    borderWidth: 1,
+    top:65
   },
   submitButtonText: {
     color: '#2b4872',
@@ -222,7 +177,8 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    marginVertical: 16
+    marginVertical: 16,
+    top:50
   },
   modalOverlay: {
     flex: 1,
