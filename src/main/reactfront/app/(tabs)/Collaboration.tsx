@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, Image, SafeAreaView, TouchableOpacity
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Ionicons } from '@expo/vector-icons';
 import FloatingWritingButton from '../../components/FloatingWritingButton';
+import { useNavigation } from '@react-navigation/native';
 
 const postsData = {
   seoul: [
@@ -71,12 +72,12 @@ const CollaborationScreen = () => {
     // 더 많은 지역 추가
   ]);
 
+  const navigation = useNavigation(); // 추가된 부분
+
   const posts = value ? postsData[value] : [];
 
-
   const handlePressAddPost = () => {
-    // 글 작성 화면으로 이동하거나 모달을 열 수 있습니다.
-    console.log('글 작성 버튼 클릭됨');
+    navigation.navigate('AddPost'); // 화면 전환
   };
 
   const renderContent = () => {
@@ -347,9 +348,7 @@ const styles = StyleSheet.create({
   },
   postsContainer: {
     paddingHorizontal: 10,
-    borderColor:'ddd',
-    borderWidth:1,
-   
+  
   },
   postContainer: {
     flexDirection: 'row',
@@ -357,7 +356,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     paddingVertical: 10,
     marginHorizontal: 10,
-    borderWidth: 0,
+
   },
   profileContainer: {
     flexDirection: 'row',

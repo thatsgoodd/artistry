@@ -20,8 +20,13 @@ const ChatPreview = () => {
   const router = useRouter();
 
   const handleChatPress = (chatId, type) => {
-    // 경로 확인 및 수정
-    router.push(`/chat/${type}/${chatId}`);
+    router.push({
+      pathname: '/ChattingScreen',
+      query: {
+        chatId: chatId,
+        chatType: type,
+      },
+    });
   };
 
   return (
@@ -35,7 +40,7 @@ const ChatPreview = () => {
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>협업 모집</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/Chat/CollaborationChat')}>
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/ChattingScreen?chatId=${chatId}&chatType=${type}')}>
             <Ionicons name="add-outline" size={20} color="#2B4872" />
           </TouchableOpacity>
         </View>
