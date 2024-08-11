@@ -72,50 +72,26 @@ const CollaborationScreen = () => {
     // 더 많은 지역 추가
   ]);
 
-  const navigation = useNavigation(); // 추가된 부분
+  const navigation = useNavigation();
 
   const posts = value ? postsData[value] : [];
 
   const handlePressAddPost = () => {
-    navigation.navigate('AddPost'); // 화면 전환
+    navigation.navigate('AddCollaborationPost');
   };
 
   const renderContent = () => {
     switch (selectedTab) {
       case 'collaborations':
-        const handlePressAddPost = () => {
-          // 글 작성 화면으로 이동하거나 모달을 열 수 있습니다.
-          console.log('글 작성 버튼 클릭됨');
-        };
         return (
           <FlatList
             data={[
-              { type: 'dropdown', key: 'dropdown' },
               { type: 'popularity', data: posts.slice(0, 1), key: 'popularity' },
               { type: 'interest', data: collaborationsData.slice(0, 4), key: 'interest' },
               { type: 'all', data: collaborationsData.slice(0, 4), key: 'all' },
             ]}
             renderItem={({ item }) => {
               switch (item.type) {
-                case 'dropdown':
-                  return (
-                    selectedTab === 'collaborations' && (
-                      <DropDownPicker
-                        open={open}
-                        value={value}
-                        items={items}
-                        setOpen={setOpen}
-                        setValue={setValue}
-                        setItems={setItems}
-                        style={styles.dropDownPicker}
-                        dropDownContainerStyle={styles.dropDownContainer}
-                        textStyle={styles.dropDownText}
-                        placeholderStyle={styles.dropDownPlaceholder}
-                        placeholder="지역 선택"
-                      />
-                    )
-                  );
-        
                 case 'popularity':
                   return (
                     <>
@@ -196,20 +172,16 @@ const CollaborationScreen = () => {
                         numColumns={1}
                       />
                     </>
-                    
                   );
                   
                 default:
                   return null;
               }
             }}
-            
             keyExtractor={(item) => item.key}
-            
           />
-          
         );
-        
+
       case 'scrap':
         return (
           <>
@@ -235,6 +207,7 @@ const CollaborationScreen = () => {
             />
           </>
         );
+
       default:
         return null;
     }
@@ -272,9 +245,23 @@ const CollaborationScreen = () => {
         </TouchableOpacity>
       </View>
 
+      {/* 드롭다운이 탭 바 아래에 위치하도록 함 */}
+      <DropDownPicker
+        open={open}
+        value={value}
+        items={items}
+        setOpen={setOpen}
+        setValue={setValue}
+        setItems={setItems}
+        style={styles.dropDownPicker}
+        dropDownContainerStyle={styles.dropDownContainer}
+        textStyle={styles.dropDownText}
+        placeholderStyle={styles.dropDownPlaceholder}
+        placeholder="지역 선택"
+      />
+
       {renderContent()}
 
-      {/* FloatingWritingButton을 화면에 따라 조건적으로 렌더링 */}
       <FloatingWritingButton onPress={handlePressAddPost} />
     </SafeAreaView>
   );
@@ -305,7 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#2B4872',
-    
   },
   iconContainer: {
     flexDirection: 'row',
@@ -321,8 +307,10 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 30,
-    marginLeft: '3%',
-    marginTop: 10,  // Adjust margin to fit below the header
+    marginHorizontal: '3%',
+    marginVertical: 10,
+    zIndex: 10,
+
   },
   dropDownContainer: {
     borderColor: '#ccc',
@@ -330,14 +318,17 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     width: '22%',
     minHeight: 30,
-    marginLeft: '3%',
+    marginHorizontal: '3%',
+    zIndex: 10,
   },
   dropDownText: {
     textAlign: 'center',
     fontSize: 11,
+    zIndex: 10,
   },
   dropDownPlaceholder: {
     fontSize: 10,
+    zIndex: 10,
   },
   sectionTitle: {
     fontSize: 18,
@@ -345,18 +336,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     marginLeft: 15,
+    zIndex: 1,
   },
   postsContainer: {
     paddingHorizontal: 10,
-  
   },
   postContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center', 
+    alignItems: 'center',
     paddingVertical: 10,
     marginHorizontal: 10,
-
   },
   profileContainer: {
     flexDirection: 'row',
@@ -378,7 +368,7 @@ const styles = StyleSheet.create({
   },
   postContent: {
     color: '#555',
-    flexShrink: 1, 
+    flexShrink: 1,
   },
   postTime: {
     color: '#888',

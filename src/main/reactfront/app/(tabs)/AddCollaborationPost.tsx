@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-const AddPost = () => {
+const AddCollaborationPost = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
@@ -104,4 +104,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddPost;
+export default AddCollaborationPost;

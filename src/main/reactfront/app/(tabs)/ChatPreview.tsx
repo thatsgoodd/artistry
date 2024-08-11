@@ -40,7 +40,7 @@ const ChatPreview = () => {
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>협업 모집</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/ChattingScreen?chatId=${chatId}&chatType=${type}')}>
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/CollaborationChat')}>
             <Ionicons name="add-outline" size={20} color="#2B4872" />
           </TouchableOpacity>
         </View>
@@ -68,7 +68,7 @@ const ChatPreview = () => {
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>중고 거래</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/Chat/TradeChat')}>
+          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/TradeChat')}>
             <Ionicons name="add-outline" size={20} color="#2B4872" />
           </TouchableOpacity>
         </View>
@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 6,
     paddingHorizontal: 15,
+    height: '21%',
   },
   profileImage: {
     width: 50,

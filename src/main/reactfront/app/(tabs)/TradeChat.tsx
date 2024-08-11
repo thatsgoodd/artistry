@@ -1,15 +1,9 @@
-import React, { useState, useCallback } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  FlatList,
-  SafeAreaView,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons"; // 아이콘 패키지 추가
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, Alert, RefreshControl, FlatList } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { SwipeListView } from 'react-native-swipe-list-view';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const initialTradeChats = [
   {
@@ -43,32 +37,65 @@ const TradeChat = () => {
   const [chats, setChats] = useState(initialTradeChats);
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    // 데이터 새로 고침 (여기서는 데이터가 변경되지 않습니다)
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setRefreshing(false);
-  }, []);
-
   const handleChatPress = (chatId) => {
-    router.push(`/chat/trade/${chatId}`);
+    router.push({
+      pathname: '/ChattingScreen',
+      query: { chatId },
+    });
   };
+
+  const handleDelete = (chatId) => {
+    Alert.alert('삭제하기', '이 채팅을 삭제하시겠습니까?', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '삭제',
+        style: 'destructive',
+        onPress: () => {
+          setChats(chats.filter(chat => chat.id !== chatId));
+        },
+      },
+    ]);
+  };
+
+  const handleReport = (chatId) => {
+    Alert.alert('신고하기', '이 채팅을 신고하시겠습니까?', [
+      {
+        text: '취소',
+        style: 'cancel',
+      },
+      {
+        text: '신고',
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert('신고됨', '채팅이 신고되었습니다.');
+        },
+      },
+    ]);
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    // Simulate a network request
+    setTimeout(() => {
+      setChats([...TradeChats]); // Reset to initial data
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   const renderItem = ({ item, index }) => (
     <View>
-      <TouchableOpacity
-        style={styles.chatItem}
+      <TouchableOpacity 
+        style={styles.rowFront}
         onPress={() => handleChatPress(item.id)}
+        activeOpacity={1} // 눌렀을 때 불투명해지지 않도록 설정
       >
-        <Image
-          source={{ uri: item.profileImage }}
-          style={styles.profileImage}
-        />
+        <Image source={{ uri: item.profileImage }} style={styles.profileImage} />
         <View style={styles.chatContent}>
           <Text style={styles.chatTitle}>{item.title}</Text>
-          <Text style={styles.chatText} numberOfLines={2} ellipsizeMode="tail">
-            {item.content}
-          </Text>
+          <Text style={styles.chatText} numberOfLines={1} ellipsizeMode="tail">{item.content}</Text>
           <Text style={styles.chatTime}>{item.time}</Text>
         </View>
         {item.unreadCount > 0 && (
@@ -77,39 +104,60 @@ const TradeChat = () => {
           </View>
         )}
       </TouchableOpacity>
-
-      {/* 점선을 마지막 항목 뒤에는 렌더링하지 않음 */}
       {index < chats.length - 1 && <DottedDivider />}
     </View>
   );
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#2B4872" />
-        </TouchableOpacity>
-      </View>
-      <View>
-        <Text style={styles.headerTitle}>채팅</Text>
-      </View>
+  const renderHiddenItem = ({ item }) => (
+    <View style={styles.rowBack}>
+      <TouchableOpacity 
+        style={[styles.backButton, styles.reportButton]} 
+        onPress={() => handleReport(item.id)}
+      >
+        <Text style={styles.backButtonText}>신고하기</Text>
+      </TouchableOpacity>
+      <TouchableOpacity 
+        style={[styles.backButton, styles.deleteButton]} 
+        onPress={() => handleDelete(item.id)}
+      >
+        <Text style={styles.backButtonText}>삭제하기</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
-      {/* Trade Chats Container */}
-      <View style={styles.sectionContainer}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>중고거래</Text>
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color="#2B4872" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>채팅</Text>
         </View>
 
-        {/* FlatList with Pull to Refresh */}
-        <FlatList
-          data={chats}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          onRefresh={handleRefresh}
-          refreshing={refreshing}
-        />
-      </View>
-    </SafeAreaView>
+        <View style={styles.sectionContainer}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>중고 거래</Text>
+          </View>
+
+          <SwipeListView
+            data={chats}
+            renderItem={renderItem}
+            renderHiddenItem={renderHiddenItem}
+            leftOpenValue={150} // Ensure this value allows the full width of the buttons to be visible
+            previewRowKey={'0'}
+            previewOpenValue={0}
+            previewOpenDelay={4000}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+              />
+            }
+          />
+        </View>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 
@@ -127,7 +175,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingVertical: 10,
   },
-
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -140,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "#2B4872",
-    marginHorizontal: 20,
+    marginHorizontal: 30,
   },
   sectionContainer: {
     shadowColor: "#000",
@@ -151,34 +198,59 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 6.27,
     elevation: 10,
-    marginBottom: 20,
-    height: 750,
+    marginBottom: 0,
+    height: '100%', // Adjusted to take up the full available space
     borderRadius: 10,
-    backgroundColor: "#fff",
-    width: "100%",
+    backgroundColor: '#fff',
+    width: '100%',
     paddingHorizontal: 5,
   },
   sectionHeader: {
     borderRadius: 10,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 15,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#2B4872",
+    fontWeight: 'bold',
+    color: '#2B4872',
   },
-  addButton: {
-    padding: 5,
-  },
-  chatItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 6,
+  rowFront: {
+    backgroundColor: '#fff',
+    borderBottomColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
     paddingHorizontal: 15,
+    paddingVertical: 0,
+    height: 100,
+  },
+  rowBack: {
+    backgroundColor: '#ddd',
+    flexDirection: 'row',
+    justifyContent: 'flex-end', // Ensure buttons align to the right
+    alignItems: 'center',
+    height: 100,
+    width: 150, // Ensure this width is enough to show buttons fully
+  },
+  backButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 75,
+    height: '100%',
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+  },
+  reportButton: {
+    backgroundColor: 'blue',
+  },
+  backButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   profileImage: {
     width: 50,
@@ -191,39 +263,39 @@ const styles = StyleSheet.create({
   },
   chatTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   chatText: {
-    color: "#555",
+    color: '#555',
   },
   chatTime: {
     fontSize: 12,
-    color: "#888",
+    color: '#888',
     marginTop: 5,
   },
   unreadCount: {
-    backgroundColor: "red",
+    backgroundColor: 'red',
     borderRadius: 15,
     width: 30,
     height: 30,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   unreadCountText: {
-    color: "#fff",
+    color: '#fff',
     fontSize: 14,
   },
   dottedContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginVertical: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 15,
   },
   dot: {
     width: 3,
     height: 1,
-    backgroundColor: "#D3DFEE",
-    marginHorizontal: 1,
+    backgroundColor: '#D3DFEE',
   },
 });
+
 
 export default TradeChat;
