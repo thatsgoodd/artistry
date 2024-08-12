@@ -9,6 +9,7 @@ import { useNavigation } from '@react-navigation/native';
 const postsData = {
   seoul: [
     {
+      id: '1',
       image: 'https://example.com/image1.jpg',
       title: '서울 인기 협업 제목 1',
       description: '서울 협업 내용 일부 1',
@@ -20,6 +21,7 @@ const postsData = {
   ],
   busan: [
     {
+      id: '2',
       image: 'https://example.com/image2.jpg',
       title: '부산 인기 협업 제목 1',
       description: '부산 협업 내용 일부 1',
@@ -33,6 +35,7 @@ const postsData = {
 
 const interestData = [
   {
+    id: '1',
     image: 'https://example.com/interest1.jpg',
     title: '관심 거래 제목 1',
     description: '관심 거래 내용 일부 1',
@@ -40,33 +43,12 @@ const interestData = [
     time: '1시간 전',
     profileImage: 'https://example.com/profile1.jpg',
   },
-  {
-    image: 'https://example.com/interest2.jpg',
-    title: '관심 거래 제목 2',
-    description: '관심 거래 내용 일부 2',
-    author: '관심 작성자2',
-    time: '2시간 전',
-    profileImage: 'https://example.com/profile2.jpg',
-  },
-  {
-    image: 'https://example.com/interest3.jpg',
-    title: '관심 거래 제목 3',
-    description: '관심 거래 내용 일부 3',
-    author: '관심 작성자3',
-    time: '3시간 전',
-    profileImage: 'https://example.com/profile3.jpg',
-  },
-  {
-    image: 'https://example.com/interest4.jpg',
-    title: '관심 거래 제목 4',
-    description: '관심 거래 내용 일부 4',
-    author: '관심 작성자4',
-    time: '4시간 전',
-    profileImage: 'https://example.com/profile4.jpg',
-  },
+  // 추가 데이터...
 ];
+
 const purchaseData = [
   {
+    id: '1',
     image: 'https://example.com/purchase1.jpg',
     title: '구매 내역 제목 1',
     description: '구매 내역 내용 일부 1',
@@ -74,33 +56,12 @@ const purchaseData = [
     time: '어제',
     profileImage: 'https://example.com/profile5.jpg',
   },
-  {
-    image: 'https://example.com/purchase2.jpg',
-    title: '구매 내역 제목 2',
-    description: '구매 내역 내용 일부 2',
-    author: '구매자2',
-    time: '2일 전',
-    profileImage: 'https://example.com/profile6.jpg',
-  },
-  {
-    image: 'https://example.com/purchase3.jpg',
-    title: '구매 내역 제목 3',
-    description: '구매 내역 내용 일부 3',
-    author: '구매자3',
-    time: '3일 전',
-    profileImage: 'https://example.com/profile7.jpg',
-  },
-  {
-    image: 'https://example.com/purchase4.jpg',
-    title: '구매 내역 제목 4',
-    description: '구매 내역 내용 일부 4',
-    author: '구매자4',
-    time: '4일 전',
-    profileImage: 'https://example.com/profile8.jpg',
-  },
+  // 추가 데이터...
 ];
+
 const saleData = [
   {
+    id: '1',
     image: 'https://example.com/sale1.jpg',
     title: '판매 내역 제목 1',
     description: '판매 내역 내용 일부 1',
@@ -108,35 +69,10 @@ const saleData = [
     time: '오늘',
     profileImage: 'https://example.com/profile9.jpg',
   },
-  {
-    image: 'https://example.com/sale2.jpg',
-    title: '판매 내역 제목 2',
-    description: '판매 내역 내용 일부 2',
-    author: '판매자2',
-    time: '2시간 전',
-    profileImage: 'https://example.com/profile10.jpg',
-  },
-  {
-    image: 'https://example.com/sale3.jpg',
-    title: '판매 내역 제목 3',
-    description: '판매 내역 내용 일부 3',
-    author: '판매자3',
-    time: '5시간 전',
-    profileImage: 'https://example.com/profile11.jpg',
-  },
-  {
-    image: 'https://example.com/sale4.jpg',
-    title: '판매 내역 제목 4',
-    description: '판매 내역 내용 일부 4',
-    author: '판매자4',
-    time: '어제',
-    profileImage: 'https://example.com/profile12.jpg',
-  },
+  // 추가 데이터...
 ];
 
-
-
-const Trade = () => {
+const TradeScreen = () => {
   const [selectedTab, setSelectedTab] = useState('location');
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -153,13 +89,18 @@ const Trade = () => {
   const handlePressAddPost = () => {
     navigation.navigate('AddTradePost');
   };
+
   const handleLocation = () => {
-    navigation.navigate('SetLocation')
-  }
+    navigation.navigate('SetLocation');
+  };
+
+  const handlePostPress = (postId) => {
+    navigation.navigate('TradePostDetail', { postId });
+  };
 
   const renderContent = () => {
     const renderPostItem = ({ item }) => (
-      <View style={styles.postContainer}>
+      <TouchableOpacity style={styles.postContainer} onPress={() => handlePostPress(item.id)}>
         {item.image ? (
           <Image source={{ uri: item.image }} style={styles.postImage} />
         ) : null}
@@ -174,60 +115,50 @@ const Trade = () => {
             <Text style={styles.postAuthor}>{item.author}</Text>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
-  
+
     switch (selectedTab) {
       case 'location':
         return (
-          <>
-
-            <FlatList
-              data={posts} // 지역별 글 표시
-              renderItem={renderPostItem}
-              keyExtractor={(item, index) => index.toString()}
-              numColumns={1}
-            />
-          </>
+          <FlatList
+            data={posts} // 지역별 글 표시
+            renderItem={renderPostItem}
+            keyExtractor={(item) => item.id}
+            numColumns={1}
+          />
         );
-  
+
       case 'interest':
         return (
-          <>
-           
-            <FlatList
-              data={interestData} // 지역별 글 표시
-              renderItem={renderPostItem}
-              keyExtractor={(item, index) => index.toString()}
-              numColumns={1}
-            />
-          </>
+          <FlatList
+            data={interestData} // 관심 거래 데이터 표시
+            renderItem={renderPostItem}
+            keyExtractor={(item) => item.id}
+            numColumns={1}
+          />
         );
-  
+
       case 'purchase':
         return (
-          <>
-            <FlatList
-              data={purchaseData} // 구매 내역 데이터 표시
-              renderItem={renderPostItem}
-              keyExtractor={(item, index) => index.toString()}
-              numColumns={1}
-            />
-          </>
+          <FlatList
+            data={purchaseData} // 구매 내역 데이터 표시
+            renderItem={renderPostItem}
+            keyExtractor={(item) => item.id}
+            numColumns={1}
+          />
         );
-  
+
       case 'sale':
         return (
-          <>
-            <FlatList
-              data={saleData} // 판매 내역 데이터 표시
-              renderItem={renderPostItem}
-              keyExtractor={(item, index) => index.toString()}
-              numColumns={1}
-            />
-          </>
+          <FlatList
+            data={saleData} // 판매 내역 데이터 표시
+            renderItem={renderPostItem}
+            keyExtractor={(item) => item.id}
+            numColumns={1}
+          />
         );
-  
+
       default:
         return null;
     }
@@ -244,7 +175,7 @@ const Trade = () => {
           <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('TradeSearch')}>
             <Ionicons name="search-outline" size={24} color="#2B4872" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}onPress={() => navigation.navigate('TradeChat')}>
+          <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('TradeChat')}>
             <Ionicons name="chatbubble-ellipses-outline" size={24} color="#2B4872" />
           </TouchableOpacity>
         </View>
@@ -276,20 +207,11 @@ const Trade = () => {
           <Text style={styles.tabButtonText}>판매 내역</Text>
         </TouchableOpacity>
       </View>
-   
 
       {renderContent()}
 
       <FloatingWritingButton onPress={handlePressAddPost} />
       <FloatingLocationButton onPress={handleLocation} />
-    </SafeAreaView>
-  );
-};
-
-const TradeScreen = () => {
-  return (
-    <SafeAreaView style={styles.container}>
-      <Trade />
     </SafeAreaView>
   );
 };
@@ -320,17 +242,23 @@ const styles = StyleSheet.create({
   iconButton: {
     marginLeft: 15,
   },
-  
-  sectionTitle: {
-    fontSize: 18,
-    color: "#2B4872",
-    fontWeight: 'bold',
-    marginBottom: 10,
-    marginLeft: 15,
-    zIndex: 1,
+  tabBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    backgroundColor: '#fff',
   },
-  postsContainer: {
-    paddingHorizontal: 10,
+  tabButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  tabButtonSelected: {
+    borderBottomWidth: 2,
+    borderBottomColor: '#2B4872',
+  },
+  tabButtonText: {
+    fontSize: 16,
+    color: '#2B4872',
   },
   postContainer: {
     flexDirection: 'row',
@@ -350,39 +278,29 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 10,
   },
-  textContainer: {
+  postImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+  },
+  postContent: {
     flex: 1,
+    marginLeft: 10,
   },
   postTitle: {
     fontSize: 16,
     fontWeight: 'bold',
   },
-  postContent: {
+  postDescription: {
     color: '#555',
-    flexShrink: 1,
   },
   postTime: {
     color: '#888',
     fontSize: 12,
     marginTop: 5,
   },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-  },
-  tabButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  tabButtonSelected: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#2B4872',
-  },
-  tabButtonText: {
-    fontSize: 16,
-    color: '#2B4872',
+  postAuthor: {
+    fontWeight: 'bold',
   },
 });
 

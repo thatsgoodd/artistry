@@ -122,8 +122,18 @@ const allFreeboardPosts = [
 const HomeScreen = () => {
   const navigation = useNavigation();
 
-  const handlePostPress = (postId) => {
-    alert(`Go to post ${postId}`);
+  const handlePostPress = (category, postId) => {
+    // 카테고리에 따라 다른 화면으로 이동하거나 다른 로직을 실행
+    if (category === '작업 공유') {
+      navigation.navigate('WorkSharingDetail', { id: postId });
+    } else if (category === '자유게시판') {
+      navigation.navigate('FreeBoardDetail', { id: postId });
+    } else if (category === '협업 모집') {
+      navigation.navigate('CollaborationDetail', { id: postId });
+    } else if (category === '중고 거래') {
+      navigation.navigate('TradeDetail', { id: postId });
+    }
+    // 필요한 경우 다른 카테고리 추가 가능
   };
 
   return (
