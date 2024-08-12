@@ -2,24 +2,23 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
-    "jsx": "react",
     "strict": true,
+    "baseUrl": "./src",
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@Home/*": ["Home/*"],
+      "@Collaboration/*": ["Collaboration/*"],
+      "@Trade/*": ["Trade/*"],
+      "@Chatting/*": ["Chatting/*"],
+      "@ArtRoom/*": ["ArtRoom/*"],
+      "@Search/*": ["Search/*"],
+      "@WorkSharing/*": ["WorkSharing/*"],
+      "@FreeBoard/*": ["FreeBoard/*"],
+      "@Notification/*": ["Notification/*"],
+      "@Comments/*": ["Comments/*"]
     }
   },
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
+    "src/**/*",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
   ]

@@ -10,7 +10,7 @@ import {
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from "../../Home/HomeScreen";
-import CollaborationScreen from "@/Collaboration/CollaborationScreen";
+import CollaborationScreen from "../../Collaboration/CollaborationScreen";
 import CollaborationChat from "../../Collaboration/CollaborationChat";
 import AddCollaborationPost from "../../Collaboration/AddCollaborationPost";
 import TradeSearch from "../../Trade/TradeSearch";
@@ -23,18 +23,18 @@ import TradeScreen from "../../Trade/TradeScreen";
 import WorkSharingScreen from "../../WorkSharing/WorkSharingScreen";
 import WorkSharingWritePost from "../../WorkSharing/WorkSharingWritePost";
 import FreeBoard from "../../FreeBoard/FreeBoardMain";
-import Notice from "../../Notification/NoticeMain";
 import PostDetail from "../../WorkSharing/PostDetails";
 import WritePost from "../../FreeBoard/WritePost";
-import EditPost from "@/FreeBoard/EditPost";
+import EditPost from "../../FreeBoard/EditPost";
 import MyCommentedPosts from "../../Comments/MyCommentedPosts";
 import { PostProvider } from "../../FreeBoard/PostContext";
 import { WorkSharingProvider } from "../../WorkSharing/WorkSharingContext";
 import { CommentedPostsProvider } from "../../Comments/CommentedPostsContext";
-import CommentSection from "@/Comments/CommentSection";
+import CommentSection from "../../Comments/CommentSection";
 import ChatPreview from "../../Chatting/ChatPreview";
-import MenuBar from "@/Home/MenuBar";
-import IconButton from "@/Home/IconButton";
+import MenuBar from "../../Home/MenuBar";
+import IconButton from "../../Home/IconButton";
+import NotificationScreen from '../../Notification/NotificationScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -66,7 +66,7 @@ function App() {
                       <IconButton
                         icon="notifications-outline"
                         color="black"
-                        onPress={() => navigation.navigate("Notice")}
+                        onPress={() => navigation.navigate("NotificationScreen")}
                       />
                     </View>
                   ),
@@ -110,6 +110,12 @@ function App() {
               />
               <Stack.Screen name="WritePost" component={WritePost} />
               <Stack.Screen name="EditPost" component={EditPost} />
+              <Stack.Screen 
+              name="NotificationScreen" 
+              component={NotificationScreen} 
+              options={
+                {title:'알림'}
+              }/>
               <Stack.Screen
                 name="MyCommentedPosts"
                 component={MyCommentedPosts}
@@ -142,7 +148,7 @@ function App() {
               />
               <Stack.Screen
                 name="Notice"
-                component={Notice}
+                component={NotificationScreen}
                 options={{
                   headerShadowVisible: false,
                   elevation: 0,

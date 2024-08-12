@@ -1,32 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // AsyncStorage 가져오기
-import { posts as initialPosts } from '../WorkSharing/posts'; // 새로운 데이터 소스에서 가져오기
+import posts from '../WorkSharing/posts'; // default로 내보낸 posts 가져오기
 import FilterSearch from './WSFilterSearch'; // FilterSearch 컴포넌트 가져오기
 import SearchContainer from '../Search/SearchContainer';
-
+import Feather from '@expo/vector-icons/Feather';
+import { useNavigation } from 'expo-router';
+import RecommendSearch from './RecommendSearch';
+import HotSearch from './HotSearch';
 const SEARCH_HISTORY_KEY = 'SEARCH_HISTORY'; // AsyncStorage에서 사용할 키
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 // PostItem 컴포넌트 정의
 const PostItem = ({ post }) => {
+
+  const navigation= useNavigation();
   return (
-    <View style={styles.postItemContainer}>
-      <Image source={{ uri: post.profile }} style={styles.profileImage} />
-      <View style={styles.postDetails}>
-        <Text style={styles.title}>{post.title}</Text>
-        <Text style={styles.name}>{post.name}</Text>
-        <Text style={styles.content}>{post.content}</Text>
-        <View style={styles.photosContainer}>
-          {post.photos.map((photo, index) => (
-            <Image key={index} source={{ uri: photo }} style={styles.photo} />
-          ))}
+    <TouchableOpacity onPress={() => navigation.navigate('PostDetail', { post: post })}>
+      <View style={styles.postItemContainer}>
+        {/* 왼쪽: 첫 번째 사진 */}
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: post.photos[0] }} style={styles.mainImage} />
         </View>
-        <View style={styles.statsContainer}>
-          <Text style={styles.statText}>Bookmarks: {post.bookmarkCount}</Text>
-          <Text style={styles.statText}>Likes: {post.likes}</Text>
+
+        {/* 오른쪽: 텍스트와 기타 정보 */}
+        <View style={styles.detailsContainer}>
+          {/* 글 제목 */}
+          <Text style={styles.title}>{post.title}</Text>
+
+          {/* 글 내용 */}
+          <Text style={styles.content}>{post.content}</Text>
+
+          {/* 작성자 프로필사진과 작성자 이름 */}
+          <View style={{ flexDirection: 'row' }}>
+            <View style={styles.authorContainer}>
+              <Image source={{ uri: post.profile }} style={styles.profileImage} />
+              <Text style={styles.authorName}>{post.name}</Text>
+            </View>
+
+            {/* 좋아요 및 북마크 */}
+            <View style={styles.statsContainer}>
+              <View style={styles.statItem}>
+                <Feather name="thumbs-up" size={16} color="#2b4872"
+                  style={styles.statIcon} />
+                <Text style={styles.statText}>{post.likes}</Text>
+              </View>
+              <View style={styles.statItem}>
+                <Feather name="bookmark" size={16} color="#2b4872" style={styles.statIcon} />
+                <Text style={styles.statText}>{post.bookmarkCount}</Text>
+              </View>
+            </View>
+          </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -43,8 +70,13 @@ function SearchBar() {
     selectedPopularity: '',
   });
 
+  // posts 데이터 확인용
+  useEffect(() => {
+    console.log('Initial Posts:', posts);
+  }, []);
+
   // 검색어에 따른 필터링
-  const filteredPosts = initialPosts ? initialPosts.filter(post => {
+  const filteredPosts = posts ? posts.filter(post => {
     const matchesSearchQuery = post.title.toLowerCase().includes(search.toLowerCase()) ||
       post.content.toLowerCase().includes(search.toLowerCase());
 
@@ -95,14 +127,6 @@ function SearchBar() {
     setIsSearching(false); // 검색 완료 시 검색 상태 false로 설정
   };
 
-  const clearHistory = async () => {
-    setSearchHistory([]);
-    try {
-      await AsyncStorage.removeItem(SEARCH_HISTORY_KEY);
-    } catch (error) {
-      console.error('Error clearing search history', error);
-    }
-  };
 
   const removeItem = async (item) => {
     const newHistory = searchHistory.filter(history => history !== item);
@@ -120,12 +144,13 @@ function SearchBar() {
 
   return (
     <View style={styles.container}>
-      <SearchContainer
-        searchText={search}
-        onChangeText={setSearch}
-        onSubmitEditing={handleSearch}
-      />
-
+      <View style={{ paddingHorizontal: 20 }}>
+        <SearchContainer
+          searchText={search}
+          onChangeText={setSearch}
+          onSubmitEditing={handleSearch}
+        />
+      </View>
       {/* 검색어 입력 중일 때만 최근 검색 기록 표시 */}
       {isSearching && (
         <>
@@ -147,7 +172,9 @@ function SearchBar() {
       {/* 검색 완료 후 필터 및 필터링된 게시물 표시 */}
       {isSearchComplete && (
         <>
-          <FilterSearch onFilterChange={handleFilterChange}/>
+          <View style={{ zIndex: 200, paddingHorizontal: 20 }}>
+            <FilterSearch onFilterChange={handleFilterChange} />
+          </View>
           <FlatList
             data={filteredPosts}
             renderItem={({ item }) => <PostItem post={item} />}
@@ -167,21 +194,11 @@ function SearchBar() {
         <View style={styles.bottomContainer}>
           <Text style={styles.color}>추천 검색</Text>
           <View style={{ flexDirection: 'row' }}>
-            <Image
-              source={require('../assets/images/useReactfront/ex1.jpg')}
-              style={styles.pic} />
-            <Image
-              source={require('../assets/images/useReactfront/ex2.jpg')}
-              style={styles.pic} />
+            <RecommendSearch/>
           </View>
           <Text style={styles.color}>인기 검색</Text>
           <View style={{ flexDirection: 'row' }}>
-            <Image
-              source={require('../assets/images/useReactfront/ex3.jpg')}
-              style={styles.pic} />
-            <Image
-              source={require('../assets/images/useReactfront/ex4.jpg')}
-              style={styles.pic} />
+           <HotSearch/>
           </View>
         </View>
       )}
@@ -191,7 +208,7 @@ function SearchBar() {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 20,
+    // paddingHorizontal: 20,
     backgroundColor: 'white',
     flex: 1,
   },
@@ -203,6 +220,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 20,
+
   },
   textInput: {
     borderWidth: 1,
@@ -234,54 +252,81 @@ const styles = StyleSheet.create({
     width: 190,
     height: 160,
   },
+
   postItemContainer: {
     flexDirection: 'row',
-    marginVertical: 10,
-    padding: 10,
+    marginVertical: 5,
+    //padding: 20,
     backgroundColor: '#f9f9f9',
-    borderRadius: 10,
+    marginHorizontal: -20,
+    elevation: 10,
+    height: 154
+
   },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-  postDetails: {
+  imageContainer: {
     flex: 1,
-    marginLeft: 10,
+    marginRight: 10,
+  },
+  mainImage: {
+    width: 214,
+    height: 154,
+    marginRight: 5
+
+  },
+  detailsContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
-  },
-  name: {
-    fontSize: 14,
-    color: '#555',
-    marginBottom: 5,
+    top: 20
   },
   content: {
-    fontSize: 14,
+    fontSize: 11,
     color: '#333',
     marginBottom: 10,
   },
-  photosContainer: {
+  authorContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
   },
-  photo: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
+  profileImage: {
+    width: 35,
+    height: 35,
+    borderRadius: 25,
     marginRight: 10,
+  },
+  authorName: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#555',
   },
   statsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    left: 50,
+    bottom: 5
+  },
+  statItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  statIcon: {
+    width: 18,
+    height: 20,
+    marginHorizontal: 8,
+    right: 20
+
   },
   statText: {
-    fontSize: 12,
-    color: '#555',
+    fontSize: 10,
+    color: '#2b4872',
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 25
   },
 });
 
