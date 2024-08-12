@@ -28,7 +28,7 @@ const categories = [
   { id: '산업디자인', name: '산업디자인', image: 'https://images.unsplash.com/photo-1614528770565-79a97bf632ff?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8fHx8fGVufDB8fHx8fA%3D%3D' }
 ];
 
-const ArtBoard = () => {
+const WorkSharingScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
@@ -308,4 +308,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ArtBoard;
+export default WorkSharingScreen;

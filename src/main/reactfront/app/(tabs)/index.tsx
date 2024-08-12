@@ -2,9 +2,10 @@ import * as React from 'react';
 import { Button, View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import HomeScreen from '../../Home/HomeScreen'
 import ArtRoom from '../../ArtRoom/ArtRoomMain';
 import Search from '../../Search/SearchBar';
-import WorkSharing from '../../WorkSharing/WorkSharing';
+import WorkSharingScreen from '../../WorkSharing/WorkSharingScreen';
 import WorkSharingWritePost from '../../WorkSharing/WorkSharingWritePost';
 import FreeBoard from '../../FreeBoard/FreeBoardMain';
 import Notice from '../../Notification/NoticeMain';
@@ -16,31 +17,8 @@ import { PostProvider } from '../../FreeBoard/PostContext';
 import { WorkSharingProvider } from '../../WorkSharing/WorkSharingContext';
 import {CommentedPostsProvider} from '../../Comments/CommentedPostsContext';
 import CommentSection from '@/Comments/CommentSection';
+import ChatPreview from '../../Chatting/ChatPreview';
 
-
-function HomeScreen({ navigation }) {
-  return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
-      <Button
-        title="자유게시판"
-        onPress={() => navigation.navigate('FreeBoard')}
-      />
-      <Button
-        title="검색"
-        onPress={() => navigation.navigate('Search')}
-      />
-      <Button
-        title="화방"
-        onPress={() => navigation.navigate('ArtRoom')}
-      />
-      <Button
-        title="작업공유"
-        onPress={() => navigation.navigate('WorkSharing')}
-      />
-    </View>
-  );
-}
 
 const Stack = createNativeStackNavigator();
 
@@ -51,9 +29,11 @@ function App() {
       <WorkSharingProvider>
         <CommentedPostsProvider>
         <NavigationContainer independent={true}>
-          <Stack.Navigator>
-            <Stack.Screen name="Home" component={HomeScreen} />
-
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomeScreen} options={{
+              headerShadowVisible: false,
+            }} />
+            <Stack.Screen name="ChatPreview" component={ChatPreview}/>
             <Stack.Screen name="WritePost" component={WritePost} />
             <Stack.Screen name="EditPost" component={EditPost}/>
             <Stack.Screen name="MyCommentedPosts" component={MyCommentedPosts}/>
@@ -101,8 +81,8 @@ function App() {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="WorkSharing"
-              component={WorkSharing}
+              name="WorkSharingScreen"
+              component={WorkSharingScreen}
               options={({ navigation }) => ({
                 title: '작업공유',
                 headerTintColor: '#2b4872',

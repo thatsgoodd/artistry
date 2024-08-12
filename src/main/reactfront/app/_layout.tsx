@@ -1,37 +1,59 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import React, { useEffect } from "react";
+import { Stack, Tabs, useNavigation } from "expo-router";
+import { View, StyleSheet, Image } from "react-native";
+import * as SplashScreen from "expo-splash-screen";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+
+  const navigation = useNavigation();
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
+    async function prepare() {
+      try {
+        await SplashScreen.hideAsync(); // 모든 작업이 완료되면 스플래시 스크린 숨기기
+      } catch (e) {
+        console.warn(e);
+      }
     }
-  }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+    prepare();
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+    <View style={{ flex: 1 }}>
+      <Stack
+        screenOptions={{
+          headerShown: false, // 모든 스크린에서 헤더 숨기기
+        }}
+      >
+        {/* 탭 내에서 스크린 설정 */}
+        <Stack.Screen
+          name="(tabs)"
+          options={{
+          }}
+        />
+       
+        <Stack.Screen
+          name="+not-found"
+          options={{
+            headerShown: false, // not-found 화면에서 헤더 숨기기
+          }}
+        />
       </Stack>
-    </ThemeProvider>
+
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  headerRightContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: 80,
+    paddingRight: 10,
+  },
+});
