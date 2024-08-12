@@ -8,12 +8,13 @@ import {
   StyleSheet,
   RefreshControl,
   Dimensions,
-  ScrollView
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
-import posts from './posts';
 import { useNavigation } from 'expo-router';
 import { useWorkSharingPosts } from './WorkSharingContext';
+import { Ionicons } from '@expo/vector-icons';
 
 // 카테고리 데이터
 const categories = [
@@ -112,46 +113,62 @@ const WorkSharingScreen = () => {
   );
 
   return (
-    <ScrollView
-      refreshControl={
-        <RefreshControl
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          colors={['#009688']}
-          tintColor="#009688"
-        />
-      }
-      style={styles.container}
-    >
-      <View>
-        <FlatList
-          data={categories}
-          renderItem={CategoryItem}
-          keyExtractor={item => item.id}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categoryScrollContainer}
-        />
-        <View style={styles.contentWriteButton}>
-          <Text style={styles.selectedCategoryText}>
-            {selectedCategory ? categories.find(c => c.id === selectedCategory).name : '모든 게시물'}
-          </Text>
-          <TouchableOpacity
-            style={styles.writeButton}
-            onPress={() => navigation.navigate('WorkSharingWritePost')}
-          >
-            <Text style={styles.writeButtonText}>작성하기</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#009688']}
+            tintColor="#009688"
+          />
+        }
+        style={styles.scrollView}
+      >
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>작업 공유</Text>
+          <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Notice')}>
+              <Ionicons name="notifications-outline" size={24} color="#2B4872" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
+              <Ionicons name="search-outline" size={24} color="#2B4872" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
+            <Ionicons name="menu-outline" size={24} color="#2B4872" />
           </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      {filteredPosts.length > 0 ? (
-        filteredPosts.map(post => (
-          <PostItem key={post.id} item={post} />
-        ))
-      ) : (
-        <Text style={styles.noPostsText}>게시물이 없습니다.</Text>
-      )}
-    </ScrollView>
+        <View>
+          <FlatList
+            data={categories}
+            renderItem={CategoryItem}
+            keyExtractor={item => item.id}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoryScrollContainer}
+          />
+          <View style={styles.contentWriteButton}>
+            <Text style={styles.selectedCategoryText}>
+              {selectedCategory ? categories.find(c => c.id === selectedCategory).name : '모든 게시물'}
+            </Text>
+            <TouchableOpacity
+              style={styles.writeButton}
+              onPress={() => navigation.navigate('WorkSharingWritePost')}
+            >
+              <Text style={styles.writeButtonText}>작성하기</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map(post => (
+            <PostItem key={post.id} item={post} />
+          ))
+        ) : (
+          <Text style={styles.noPostsText}>게시물이 없습니다.</Text>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -159,6 +176,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+    borderColor: '#fff',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#2B4872',
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 'auto',
+  },
+  iconButton: {
+    marginLeft: 15,
   },
   categoryScrollContainer: {
     marginTop: 10,

@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, SafeAreaView, TouchableOpacity } from 'react-native';
+import DropDownPicker from 'react-native-dropdown-picker';
 import { Ionicons } from '@expo/vector-icons';
 import FloatingWritingButton from '../components/FloatingWritingButton';
 import FloatingLocationButton from '../components/FloatingLocationButton';
 import { useNavigation } from '@react-navigation/native';
 
-// Example data for different sections
 const postsData = {
   seoul: [
     {
       image: 'https://example.com/image1.jpg',
-      title: '서울 협업 제목 1',
+      title: '서울 인기 협업 제목 1',
       description: '서울 협업 내용 일부 1',
       author: '작성자1',
       time: '1시간 전',
@@ -21,7 +21,7 @@ const postsData = {
   busan: [
     {
       image: 'https://example.com/image2.jpg',
-      title: '부산 협업 제목 1',
+      title: '부산 인기 협업 제목 1',
       description: '부산 협업 내용 일부 1',
       author: '작성자2',
       time: '2시간 전',
@@ -30,18 +30,6 @@ const postsData = {
     // 추가 데이터...
   ],
 };
-
-const popularData = [
-  {
-    image: 'https://example.com/popular1.jpg',
-    title: '인기 협업 제목 1',
-    description: '인기 협업 내용 일부 1',
-    author: '작성자1',
-    time: '1시간 전',
-    profileImage: 'https://example.com/profile1.jpg',
-  },
-  // 추가 데이터...
-];
 
 const interestData = [
   {
@@ -52,22 +40,103 @@ const interestData = [
     time: '1시간 전',
     profileImage: 'https://example.com/profile1.jpg',
   },
-  // 추가 데이터...
-];
-
-const scrapData = [
   {
-    image: 'https://example.com/scrap1.jpg',
-    title: '스크랩 거래 제목 1',
-    description: '스크랩 거래 내용 일부 1',
-    author: '스크랩 작성자1',
-    time: '1시간 전',
-    profileImage: 'https://example.com/profile1.jpg',
+    image: 'https://example.com/interest2.jpg',
+    title: '관심 거래 제목 2',
+    description: '관심 거래 내용 일부 2',
+    author: '관심 작성자2',
+    time: '2시간 전',
+    profileImage: 'https://example.com/profile2.jpg',
   },
-  // 추가 데이터...
+  {
+    image: 'https://example.com/interest3.jpg',
+    title: '관심 거래 제목 3',
+    description: '관심 거래 내용 일부 3',
+    author: '관심 작성자3',
+    time: '3시간 전',
+    profileImage: 'https://example.com/profile3.jpg',
+  },
+  {
+    image: 'https://example.com/interest4.jpg',
+    title: '관심 거래 제목 4',
+    description: '관심 거래 내용 일부 4',
+    author: '관심 작성자4',
+    time: '4시간 전',
+    profileImage: 'https://example.com/profile4.jpg',
+  },
+];
+const purchaseData = [
+  {
+    image: 'https://example.com/purchase1.jpg',
+    title: '구매 내역 제목 1',
+    description: '구매 내역 내용 일부 1',
+    author: '구매자1',
+    time: '어제',
+    profileImage: 'https://example.com/profile5.jpg',
+  },
+  {
+    image: 'https://example.com/purchase2.jpg',
+    title: '구매 내역 제목 2',
+    description: '구매 내역 내용 일부 2',
+    author: '구매자2',
+    time: '2일 전',
+    profileImage: 'https://example.com/profile6.jpg',
+  },
+  {
+    image: 'https://example.com/purchase3.jpg',
+    title: '구매 내역 제목 3',
+    description: '구매 내역 내용 일부 3',
+    author: '구매자3',
+    time: '3일 전',
+    profileImage: 'https://example.com/profile7.jpg',
+  },
+  {
+    image: 'https://example.com/purchase4.jpg',
+    title: '구매 내역 제목 4',
+    description: '구매 내역 내용 일부 4',
+    author: '구매자4',
+    time: '4일 전',
+    profileImage: 'https://example.com/profile8.jpg',
+  },
+];
+const saleData = [
+  {
+    image: 'https://example.com/sale1.jpg',
+    title: '판매 내역 제목 1',
+    description: '판매 내역 내용 일부 1',
+    author: '판매자1',
+    time: '오늘',
+    profileImage: 'https://example.com/profile9.jpg',
+  },
+  {
+    image: 'https://example.com/sale2.jpg',
+    title: '판매 내역 제목 2',
+    description: '판매 내역 내용 일부 2',
+    author: '판매자2',
+    time: '2시간 전',
+    profileImage: 'https://example.com/profile10.jpg',
+  },
+  {
+    image: 'https://example.com/sale3.jpg',
+    title: '판매 내역 제목 3',
+    description: '판매 내역 내용 일부 3',
+    author: '판매자3',
+    time: '5시간 전',
+    profileImage: 'https://example.com/profile11.jpg',
+  },
+  {
+    image: 'https://example.com/sale4.jpg',
+    title: '판매 내역 제목 4',
+    description: '판매 내역 내용 일부 4',
+    author: '판매자4',
+    time: '어제',
+    profileImage: 'https://example.com/profile12.jpg',
+  },
 ];
 
-const CollaborationScreen = () => {
+
+
+const Trade = () => {
   const [selectedTab, setSelectedTab] = useState('location');
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
@@ -82,12 +151,11 @@ const CollaborationScreen = () => {
   const posts = value ? postsData[value] : [];
 
   const handlePressAddPost = () => {
-    navigation.navigate('AddCollaborationPost');
+    navigation.navigate('AddTradePost');
   };
-
   const handleLocation = () => {
-    navigation.navigate('SetLocation');
-  };
+    navigation.navigate('SetLocation')
+  }
 
   const renderContent = () => {
     const renderPostItem = ({ item }) => (
@@ -108,48 +176,58 @@ const CollaborationScreen = () => {
         </View>
       </View>
     );
-
+  
     switch (selectedTab) {
       case 'location':
         return (
-          <FlatList
-            data={posts} // 지역별 글 표시
-            renderItem={renderPostItem}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={1}
-          />
-        );
+          <>
 
-      case 'popular':
-        return (
-          <FlatList
-            data={popularData} // 인기 데이터 표시
-            renderItem={renderPostItem}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={1}
-          />
+            <FlatList
+              data={posts} // 지역별 글 표시
+              renderItem={renderPostItem}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={1}
+            />
+          </>
         );
-
+  
       case 'interest':
         return (
-          <FlatList
-            data={interestData} // 관심 데이터 표시
-            renderItem={renderPostItem}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={1}
-          />
+          <>
+           
+            <FlatList
+              data={interestData} // 지역별 글 표시
+              renderItem={renderPostItem}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={1}
+            />
+          </>
         );
-
-      case 'scrap':
+  
+      case 'purchase':
         return (
-          <FlatList
-            data={scrapData} // 스크랩 데이터 표시
-            renderItem={renderPostItem}
-            keyExtractor={(item, index) => index.toString()}
-            numColumns={1}
-          />
+          <>
+            <FlatList
+              data={purchaseData} // 구매 내역 데이터 표시
+              renderItem={renderPostItem}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={1}
+            />
+          </>
         );
-
+  
+      case 'sale':
+        return (
+          <>
+            <FlatList
+              data={saleData} // 판매 내역 데이터 표시
+              renderItem={renderPostItem}
+              keyExtractor={(item, index) => index.toString()}
+              numColumns={1}
+            />
+          </>
+        );
+  
       default:
         return null;
     }
@@ -158,15 +236,15 @@ const CollaborationScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>협업 모집</Text>
+        <Text style={styles.headerTitle}>중고 거래</Text>
         <View style={styles.iconContainer}>
           <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Notification')}>
             <Ionicons name="notifications-outline" size={24} color="#2B4872" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton}onPress={() => navigation.navigate('CollaborationSearch')}>
+          <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('TradeSearch')}>
             <Ionicons name="search-outline" size={24} color="#2B4872" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('CollaborationChat')}>
+          <TouchableOpacity style={styles.iconButton}onPress={() => navigation.navigate('TradeChat')}>
             <Ionicons name="chatbubble-ellipses-outline" size={24} color="#2B4872" />
           </TouchableOpacity>
         </View>
@@ -183,26 +261,35 @@ const CollaborationScreen = () => {
           style={[styles.tabButton, selectedTab === 'interest' && styles.tabButtonSelected]}
           onPress={() => setSelectedTab('interest')}
         >
-          <Text style={styles.tabButtonText}>분야별</Text>
+          <Text style={styles.tabButtonText}>관심 거래</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'popular' && styles.tabButtonSelected]}
-          onPress={() => setSelectedTab('popular')}
+          style={[styles.tabButton, selectedTab === 'purchase' && styles.tabButtonSelected]}
+          onPress={() => setSelectedTab('purchase')}
         >
-          <Text style={styles.tabButtonText}>인기 협업</Text>
+          <Text style={styles.tabButtonText}>구매 내역</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, selectedTab === 'scrap' && styles.tabButtonSelected]}
-          onPress={() => setSelectedTab('scrap')}
+          style={[styles.tabButton, selectedTab === 'sale' && styles.tabButtonSelected]}
+          onPress={() => setSelectedTab('sale')}
         >
-          <Text style={styles.tabButtonText}>스크랩</Text>
+          <Text style={styles.tabButtonText}>판매 내역</Text>
         </TouchableOpacity>
       </View>
+   
 
       {renderContent()}
 
       <FloatingWritingButton onPress={handlePressAddPost} />
       <FloatingLocationButton onPress={handleLocation} />
+    </SafeAreaView>
+  );
+};
+
+const TradeScreen = () => {
+  return (
+    <SafeAreaView style={styles.container}>
+      <Trade />
     </SafeAreaView>
   );
 };
@@ -233,6 +320,18 @@ const styles = StyleSheet.create({
   iconButton: {
     marginLeft: 15,
   },
+  
+  sectionTitle: {
+    fontSize: 18,
+    color: "#2B4872",
+    fontWeight: 'bold',
+    marginBottom: 10,
+    marginLeft: 15,
+    zIndex: 1,
+  },
+  postsContainer: {
+    paddingHorizontal: 10,
+  },
   postContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -251,21 +350,16 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 10,
   },
-  postImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  postContent: {
+  textContainer: {
     flex: 1,
   },
   postTitle: {
     fontSize: 16,
     fontWeight: 'bold',
   },
-  postDescription: {
+  postContent: {
     color: '#555',
+    flexShrink: 1,
   },
   postTime: {
     color: '#888',
@@ -292,4 +386,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CollaborationScreen;
+export default TradeScreen;

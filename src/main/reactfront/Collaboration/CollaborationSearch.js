@@ -4,7 +4,7 @@ import initialPosts from '../FreeBoard/posts'; // posts.js에서 initialPosts �
 import { useNavigation } from '@react-navigation/native'; // 네비게이션 훅 가져오기
 import SearchContainer from '../Search/SearchContainer';
 
-const TradeSearch = () => {
+const CollaborationSearch = () => {
   const navigation = useNavigation(); // 네비게이션 훅 사용
   const [searchText, setSearchText] = useState('');
   const [displayedPosts, setDisplayedPosts] = useState([]); // Displayed posts state
@@ -165,4 +165,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TradeSearch;
+export default CollaborationSearch;

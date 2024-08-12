@@ -1,21 +1,39 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, SafeAreaView, Alert, RefreshControl, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
-const initialCollaborativeChats = [
-  { id: '1', profileImage: 'https://via.placeholder.com/50', title: '팀 프로젝트 A', content: '팀원들이 필요한 기능을 논의하는 채팅입니다.', time: '2시간 전', unreadCount: 2 },
-  { id: '2', profileImage: 'https://via.placeholder.com/50', title: '팀 프로젝트 B', content: '디자인 리뷰와 관련된 채팅입니다.', time: '5시간 전', unreadCount: 0 },
-  { id: '3', profileImage: 'https://via.placeholder.com/50', title: '팀 프로젝트 C', content: '회의 결과를 논의하는 채팅입니다.', time: '8시간 전', unreadCount: 1 },
-  { id: '4', profileImage: 'https://via.placeholder.com/50', title: '팀 프로젝트 D', content: '개발 진행 상황을 공유하는 채팅입니다.', time: '1일 전', unreadCount: 0 },
-  { id: '5', profileImage: 'https://via.placeholder.com/50', title: '팀 프로젝트 E', content: '추가적인 피드백을 논의하는 채팅입니다.', time: '3일 전', unreadCount: 3 },
+import { useNavigation } from '@react-navigation/native';
+const initialTradeChats = [
+  {
+    id: "1",
+    profileImage: "https://via.placeholder.com/50",
+    title: "중고 물건 A",
+    content: "중고 물건에 대한 거래 채팅입니다.",
+    time: "1일 전",
+    unreadCount: 1,
+  },
+  {
+    id: "2",
+    profileImage: "https://via.placeholder.com/50",
+    title: "중고 물건 B",
+    content: "상세한 제품 설명을 포함한 채팅입니다.",
+    time: "3일 전",
+    unreadCount: 3,
+  },
+  {
+    id: "3",
+    profileImage: "https://via.placeholder.com/50",
+    title: "중고 물건 C",
+    content: "추가적인 질문과 답변이 포함된 채팅입니다.",
+    time: "5일 전",
+    unreadCount: 0,
+  },
 ];
 
-const CollaborationChat = () => {
+const TradeChat = () => {
     const navigation = useNavigation(); // 네비게이션 훅 사용
-    const [chats, setChats] = useState(initialCollaborativeChats);
+    const [chats, setChats] = useState(initialTradeChats);
     const [refreshing, setRefreshing] = useState(false);
   
     const handleChatPress = (chatId) => {
@@ -114,7 +132,7 @@ const CollaborationChat = () => {
   
           <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>협업 모집</Text>
+              <Text style={styles.sectionTitle}>중고 거래</Text>
             </View>
   
             <SwipeListView
@@ -277,4 +295,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default CollaborationChat;
+export default TradeChat;

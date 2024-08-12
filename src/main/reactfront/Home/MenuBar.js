@@ -13,12 +13,12 @@ const MenuBar = () => {
 
   const handleLinkPress = (screenName) => {
     setIsCenterPressed(false);
-    navigation.navigate(screenName); // 변경된 부분
+    navigation.navigate(screenName);
   };
 
   return (
     <View style={styles.menuBar}>
-      <TouchableOpacity onPress={() => handleLinkPress('Home')} style={styles.iconContainer}>
+      <TouchableOpacity onPress={() =>handleLinkPress('Home')} style={styles.iconContainer}>
         <Ionicons name="home-outline" size={30} color="#2B4872" />
         <Text style={styles.iconLabel}>홈</Text>
       </TouchableOpacity>
@@ -29,31 +29,31 @@ const MenuBar = () => {
         </TouchableOpacity>
         {isCenterPressed && (
           <View style={styles.selectionContainer}>
-            <TouchableOpacity onPress={() => handleLinkPress('WorkSharingScreen')} style={styles.selectionIcon}>
+            <TouchableOpacity onPress={() =>  handleLinkPress('WorkSharingScreen')} style={styles.selectionIcon}>
               <View style={styles.circle}>
                 <Ionicons name="color-palette-outline" size={24} color="#2B4872" />
               </View>
               <Text style={styles.circleLabel}>작업 공유</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleLinkPress('Trade')} style={styles.selectionIcon}>
+            <TouchableOpacity onPress={() => handleLinkPress('TradeScreen')} style={styles.selectionIcon}>
               <View style={styles.circle}>
                 <Ionicons name="basket-outline" size={24} color="#2B4872" />
               </View>
               <Text style={styles.circleLabel}>중고 거래</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleLinkPress('Collaboration')} style={styles.selectionIcon}>
+            <TouchableOpacity onPress={() => handleLinkPress('CollaborationScreen')} style={styles.selectionIcon}>
               <View style={styles.circle}>
                 <Ionicons name="people-outline" size={24} color="#2B4872" />
               </View>
               <Text style={styles.circleLabel}>협업 모집</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleLinkPress('Freeboard')} style={styles.selectionIcon}>
+            <TouchableOpacity onPress={() =>handleLinkPress('FreeBoard')} style={styles.selectionIcon}>
               <View style={styles.circle}>
                 <Ionicons name="clipboard-outline" size={24} color="#2B4872" />
               </View>
               <Text style={styles.circleLabel}>자유게시판</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => handleLinkPress('ArtStore')} style={styles.selectionIcon}>
+            <TouchableOpacity onPress={() => handleLinkPress('ArtRoom')} style={styles.selectionIcon}>
               <View style={styles.circle}>
                 <Ionicons name="cart-outline" size={24} color="#2B4872" />
               </View>
@@ -63,7 +63,7 @@ const MenuBar = () => {
         )}
       </View>
 
-      <TouchableOpacity onPress={() => handleLinkPress('MyPage')} style={styles.iconContainer}>
+      <TouchableOpacity onPress={() => handleLinkPress('mypage')} style={styles.iconContainer}>
         <Ionicons name="person-circle-outline" size={30} color="#2B4872" />
         <Text style={styles.iconLabel}>My Page</Text>
       </TouchableOpacity>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const staticCollaborativeChats = [
@@ -17,16 +17,10 @@ const staticTradeChats = [
 ];
 
 const ChatPreview = () => {
-  const router = useRouter();
+  const navigation = useNavigation();
 
   const handleChatPress = (chatId, type) => {
-    router.push({
-      pathname: '/ChattingScreen',
-      query: {
-        chatId: chatId,
-        chatType: type,
-      },
-    });
+    navigation.navigate('ChattingScreen', { chatId, chatType: type });
   };
 
   return (
@@ -40,7 +34,7 @@ const ChatPreview = () => {
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>협업 모집</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/CollaborationChat')}>
+          <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('CollaborationChat')}>
             <Ionicons name="add-outline" size={20} color="#2B4872" />
           </TouchableOpacity>
         </View>
@@ -68,7 +62,7 @@ const ChatPreview = () => {
       <View style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>중고 거래</Text>
-          <TouchableOpacity style={styles.addButton} onPress={() => router.push('/TradeChat')}>
+          <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('TradeChat')}>
             <Ionicons name="add-outline" size={20} color="#2B4872" />
           </TouchableOpacity>
         </View>

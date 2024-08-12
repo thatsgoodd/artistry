@@ -30,11 +30,7 @@ export default function RootLayout() {
         }}
       >
         {/* 탭 내에서 스크린 설정 */}
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-          }}
-        />
+
        
         <Stack.Screen
           name="+not-found"
