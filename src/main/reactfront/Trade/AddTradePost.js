@@ -4,7 +4,7 @@ import {
   Alert, Image, Modal, ScrollView, TouchableWithoutFeedback,
   KeyboardAvoidingView, Platform
 } from 'react-native';
-import { useWorkSharingPosts } from './WorkSharingContext';
+import { useWorkSharingPosts } from '..//WorkSharing/WorkSharingContext';
 import { usePhotoPicker } from '../PhotoPicker';
 
 const AddTradePost = ({ route, navigation }) => {

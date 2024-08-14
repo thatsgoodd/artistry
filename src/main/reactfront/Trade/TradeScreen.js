@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, SafeAreaView, TouchableOpacity } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
 import { Ionicons } from '@expo/vector-icons';
 import FloatingWritingButton from '../components/FloatingWritingButton';
 import FloatingLocationButton from '../components/FloatingLocationButton';
 import { useNavigation } from '@react-navigation/native';
+import { TradeLocationProvider } from './TradeLocationContext';
 
 const postsData = {
   seoul: [
@@ -91,7 +91,7 @@ const TradeScreen = () => {
   };
 
   const handleLocation = () => {
-    navigation.navigate('SetLocation');
+    navigation.navigate('SetTradeLocation');
   };
 
   const handlePostPress = (postId) => {
@@ -165,13 +165,11 @@ const TradeScreen = () => {
   };
 
   return (
+
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>중고 거래</Text>
         <View style={styles.iconContainer}>
-          <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Notification')}>
-            <Ionicons name="notifications-outline" size={24} color="#2B4872" />
-          </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('TradeSearch')}>
             <Ionicons name="search-outline" size={24} color="#2B4872" />
           </TouchableOpacity>
@@ -213,6 +211,7 @@ const TradeScreen = () => {
       <FloatingWritingButton onPress={handlePressAddPost} />
       <FloatingLocationButton onPress={handleLocation} />
     </SafeAreaView>
+
   );
 };
 

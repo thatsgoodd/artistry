@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -8,13 +8,17 @@ import {
   Image,
   Modal,
   Platform,
-  KeyboardAvoidingView,
   Dimensions,
+  Alert,
+  Clipboard, // Clipboard를 'react-native'로 가져옴
 } from 'react-native';
-import { GiftedChat, Send } from 'react-native-gifted-chat';
+import { GiftedChat, Send, Bubble } from 'react-native-gifted-chat';
 import * as ImagePicker from 'expo-image-picker';
 import { useLocalSearchParams } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
+import uuid from 'react-native-uuid';
+import { Ionicons } from '@expo/vector-icons';
+import ActionSheet from '@alessiocancian/react-native-actionsheet';
 
 const ChattingScreen = () => {
   const { chatId, chatType = 'collaboration', userName = 'Guest' } = useLocalSearchParams();
@@ -22,6 +26,9 @@ const ChattingScreen = () => {
   const [messages, setMessages] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const actionSheetRef = useRef(null);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const currentUserId = 1; // 현재 사용자 ID (예제에서는 하드코딩)
 
   // 이미지 선택 핸들러
   const handleUploadButtonPress = async () => {
@@ -41,7 +48,13 @@ const ChattingScreen = () => {
   const onSend = useCallback((newMessages = []) => {
     if (selectedImage) {
       const imageMessage = {
-        ...newMessages[0],
+        _id: uuid.v4(),
+        createdAt: new Date(),
+        user: {
+          _id: currentUserId,
+          name: userName,
+          avatar: 'https://via.placeholder.com/150',
+        },
         image: selectedImage,
       };
       setMessages(previousMessages => GiftedChat.append(previousMessages, imageMessage));
@@ -51,12 +64,45 @@ const ChattingScreen = () => {
     }
   }, [selectedImage]);
 
+  // 메시지 꾹 눌렀을 때 액션 시트 표시
+  const handleLongPress = (context, message) => {
+    setSelectedMessage(message);
+    actionSheetRef.current?.show();
+  };
+
+  const handleActionSheetPress = (index) => {
+    if (selectedMessage) {
+      if (selectedMessage.user._id === currentUserId) {
+        // 본인 메시지
+        if (index === 0) {
+          // 삭제하기 선택됨
+          setMessages(previousMessages => previousMessages.filter(msg => msg._id !== selectedMessage._id));
+        } else if (index === 1) {
+          // 복사하기 선택됨
+          Clipboard.setString(selectedMessage.text);
+          Alert.alert('복사 완료', '메시지가 클립보드에 복사되었습니다.');
+        }
+      } else {
+        // 타인 메시지
+        if (index === 0) {
+          // 신고하기 선택됨
+          Alert.alert('신고', `메시지를 신고합니다: ${selectedMessage.text}`);
+        } else if (index === 1) {
+          // 복사하기 선택됨
+          Clipboard.setString(selectedMessage.text);
+          Alert.alert('복사 완료', '메시지가 클립보드에 복사되었습니다.');
+        }
+      }
+      setSelectedMessage(null);
+    }
+  };
+
   // 뒤로가기 버튼 동작 설정
   const handleGoBack = () => {
     if (chatType === 'collaboration') {
-      navigation.navigate('CollaborationChat'); // 협업 채팅 홈 화면
+      navigation.navigate('CollaborationChat');
     } else if (chatType === 'trading') {
-      navigation.navigate('TradeChat'); // 중고 거래 홈 화면
+      navigation.navigate('TradeChat');
     }
   };
 
@@ -77,60 +123,95 @@ const ChattingScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-      >
-        {/* 헤더 */}
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-            <Text style={styles.backButtonText}>←</Text>
-          </TouchableOpacity>
-          <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{chatType === 'collaboration' ? '협업 채팅' : '중고 거래 채팅'}</Text>
-            <Text style={styles.userName}>{userName}</Text>
-          </View>
+      {/* 헤더 */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+          <Ionicons name="arrow-back" style={styles.backButtonText} size={24} color="#2B4872" />
+        </TouchableOpacity>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>{chatType === 'collaboration' ? '협업 채팅' : '중고 거래 채팅'}</Text>
+          <Text style={styles.userName}>{userName}</Text>
         </View>
+      </View>
 
-        {/* 선택된 이미지 미리보기 */}
-        {selectedImage && (
-          <View style={styles.previewContainer}>
-            <TouchableOpacity
-              style={styles.previewImageWrapper}
-              onPress={() => setIsModalVisible(true)}
-            >
-              <Image source={{ uri: selectedImage }} style={styles.previewImage} />
-              <TouchableOpacity style={styles.closePreviewButton} onPress={() => setSelectedImage(null)}>
-                <Text style={styles.closePreviewButtonText}>✖</Text>
-              </TouchableOpacity>
+      {/* 선택된 이미지 미리보기 */}
+      {selectedImage && (
+        <View style={styles.previewContainer}>
+          <TouchableOpacity
+            style={styles.previewImageWrapper}
+            onPress={() => setIsModalVisible(true)}
+          >
+            <Image source={{ uri: selectedImage }} style={styles.previewImage} />
+            <TouchableOpacity style={styles.closePreviewButton} onPress={() => setSelectedImage(null)}>
+              <Ionicons name="close" style={styles.closePreviewButtonText} />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* 채팅 UI */}
+      <GiftedChat
+        messages={messages}
+        onSend={newMessages => onSend(newMessages)}
+        user={{
+          _id: currentUserId,
+          name: userName,
+          avatar: 'https://via.placeholder.com/150',
+        }}
+        renderActions={() => (
+          <TouchableOpacity onPress={handleUploadButtonPress} style={styles.uploadButton}>
+            <Ionicons name='camera-outline' style={styles.uploadButtonText} />
+          </TouchableOpacity>
         )}
+        renderSend={(props) => {
+          const { text, onSend, user } = props;
 
-        {/* 채팅 UI */}
-        <GiftedChat
-          messages={messages}
-          onSend={newMessages => onSend(newMessages)}
-          user={{
-            _id: 1,
-            name: userName,
-            avatar: 'https://via.placeholder.com/150',
-          }}
-          renderActions={() => (
-            <TouchableOpacity onPress={handleUploadButtonPress} style={styles.uploadButton}>
-              <Text style={styles.uploadButtonText}>📷</Text>
+          return (
+            <TouchableOpacity
+              onPress={() => {
+                if (text.trim().length > 0 || selectedImage) {
+                  if (onSend) {
+                    let message = {
+                      _id: uuid.v4(),
+                      text: text.trim(),
+                      user,
+                      createdAt: new Date(),
+                    };
+                    onSend([message], true);
+                  }
+                }
+              }}
+              style={styles.sendButton}
+            >
+              <Ionicons name='send-outline' style={styles.sendButtonText} />
             </TouchableOpacity>
-          )}
-          renderSend={(props) => (
-            <Send {...props}>
-              <View style={styles.sendButton}>
-                <Text style={styles.sendButtonText}>전송</Text>
-              </View>
-            </Send>
-          )}
-        />
-      </KeyboardAvoidingView>
+          );
+        }}
+        bottomOffset={Platform.OS === 'ios' ? 40 : 0}
+        minInputToolbarHeight={50}
+        renderBubble={(props) => (
+          <Bubble
+            {...props}
+            wrapperStyle={{
+              left: {
+                backgroundColor: '#faf3d0',
+              },
+              right: {
+                backgroundColor: '#718BAE',
+              },
+            }}
+            textStyle={{
+              left: {
+                color: '#000',
+              },
+              right: {
+                color: '#fff',
+              },
+            }}
+          />
+        )}
+        onLongPress={(context, message) => handleLongPress(context, message)}
+      />
 
       {/* 이미지 확대 모달 */}
       <Modal
@@ -140,11 +221,23 @@ const ChattingScreen = () => {
       >
         <View style={styles.modalContainer}>
           <TouchableOpacity style={styles.modalCloseButton} onPress={() => setIsModalVisible(false)}>
-            <Text style={styles.modalCloseButtonText}>✖</Text>
+            <Ionicons name="close" size={30} style={styles.ModalclosePreviewButton} />
           </TouchableOpacity>
           <Image source={{ uri: selectedImage }} style={styles.modalImage} />
         </View>
       </Modal>
+
+      {/* 액션 시트 */}
+      <ActionSheet
+        ref={actionSheetRef}
+        options={
+          selectedMessage && selectedMessage.user._id === currentUserId
+            ? ['삭제하기', '복사하기', '취소']
+            : ['신고하기', '복사하기', '취소']
+        }
+        cancelButtonIndex={selectedMessage && selectedMessage.user._id === currentUserId ? 2 : 2}
+        onPress={handleActionSheetPress}
+      />
     </SafeAreaView>
   );
 };
@@ -155,10 +248,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   header: {
+    paddingRight: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
+    padding: 20,
     borderBottomColor: '#ddd',
     backgroundColor: '#fff',
   },
@@ -167,7 +260,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 24,
-    color: '#007bff',
+    color: '#000',
   },
   headerTitleContainer: {
     flex: 1,
@@ -200,14 +293,15 @@ const styles = StyleSheet.create({
   },
   closePreviewButton: {
     position: 'absolute',
-    top: 10,
     right: 10,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 15,
     padding: 5,
   },
+  ModalclosePreviewButton: {
+    color: 'white',
+  },
   closePreviewButtonText: {
-    color: '#fff',
+    color: '#000',
     fontSize: 20,
   },
   uploadButton: {
@@ -215,14 +309,15 @@ const styles = StyleSheet.create({
   },
   uploadButtonText: {
     fontSize: 24,
+    paddingBottom: 10,
   },
   sendButton: {
     marginRight: 10,
-    marginBottom: 5,
+    marginBottom: 10,
   },
   sendButtonText: {
-    color: '#007bff',
-    fontSize: 16,
+    color: '#000',
+    fontSize: 20,
   },
   modalContainer: {
     flex: 1,
@@ -234,7 +329,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 40,
     right: 20,
-    backgroundColor: 'rgba(0,0,0,0.5)',
     borderRadius: 15,
     padding: 10,
   },

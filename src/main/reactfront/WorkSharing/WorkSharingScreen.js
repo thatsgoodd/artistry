@@ -128,15 +128,9 @@ const WorkSharingScreen = () => {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>작업 공유</Text>
           <View style={styles.iconContainer}>
-            <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Notice')}>
-              <Ionicons name="notifications-outline" size={24} color="#2B4872" />
-            </TouchableOpacity>
             <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
               <Ionicons name="search-outline" size={24} color="#2B4872" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={() => navigation.navigate('Search')}>
-            <Ionicons name="menu-outline" size={24} color="#2B4872" />
-          </TouchableOpacity>
           </View>
         </View>
         <View>
