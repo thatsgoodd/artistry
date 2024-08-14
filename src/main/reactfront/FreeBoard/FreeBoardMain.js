@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import {
-  View, Text, StyleSheet, Image, TouchableOpacity
-} from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { PostProvider } from './PostContext';
 import FreeBoard from './FreeBoard';
 import WritePost from './WritePost';
 import ViewPost from './ViewPost';
@@ -14,6 +11,9 @@ import MenuModal from './MenuModal'; // MenuModal 컴포넌트 임포트
 import Search from '../Search/SearchMain';
 import SearchScreen from './SearchScreen';
 import MyCommentedPosts from '../Comments/MyCommentedPosts';
+import NotificationScreen from '../Notification/NotificationScreen';
+import { PostProvider } from './PostContext';
+import CommentSection from '../Comments/CommentSection';
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +31,7 @@ const App = () => {
     },
     headerRight: () => (
       <View style={styles.flexDirection}>
-        <TouchableOpacity onPress={() => navigation.navigate('Notice')}>
+        <TouchableOpacity onPress={() => navigation.navigate('NotificationScreen')}>
           <Image source={require('../assets/images/useReactfront/notice.png')} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.searchPadding} onPress={() => navigation.navigate('SearchScreen')}>
@@ -45,7 +45,7 @@ const App = () => {
   });
 
   return (
-
+    <PostProvider>
       <NavigationContainer independent={true}>
         <Stack.Navigator>
           <Stack.Screen
@@ -76,28 +76,31 @@ const App = () => {
               ),
             })}
           />
+          <Stack.Screen name="CommentSection" component={CommentSection} />
+
           <Stack.Screen name="EditPost" component={EditPost} />
           <Stack.Screen name="DeletePost" component={DeletePost} />
-          <Stack.Screen name="Search" component={Search}/>
-          <Stack.Screen name="MyCommentedPosts" component={MyCommentedPosts}/>
-          <Stack.Screen 
-          name="SearchScreen" 
-          component={SearchScreen}
-          options={({ navigation }) => ({
-            ...headerOptions(navigation),
-            title: '자유게시판',
-          })}/>
-          
-          
+          <Stack.Screen name="Search" component={Search} />
+          <Stack.Screen name="MyCommentedPosts" component={MyCommentedPosts} />
+          <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+          <Stack.Screen
+            name="SearchScreen"
+            component={SearchScreen}
+            options={({ navigation }) => ({
+              ...headerOptions(navigation),
+              title: '자유게시판',
+            })} />
+
+
         </Stack.Navigator>
 
-        {/* MenuModal을 App의 루트에 추가 */}
+
         <MenuModal
           modalVisible={menuModalVisible}
           setModalVisible={() => setMenuModalVisible(false)}
         />
       </NavigationContainer>
-  
+    </PostProvider>
   );
 };
 

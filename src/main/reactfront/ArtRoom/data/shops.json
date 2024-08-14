@@ -1,558 +1,76 @@
 {
-  "서울특별시": [
+  "서울": [
     {
       "district": "강남구",
-      "center":{"latitude":37.4966645,"longitude":127.0629804},
+      "center": {
+        "latitude": 37.498,
+        "longitude": 127.027
+      },
       "shops": [
         {
-          "id": "강남구_1",
-          "name": "세일화방",
-          "location": { "latitude": 37.5014929, "longitude": 127.051123 },
-          "address": "서울특별시 강남구 대치동 898-32"
-        },
-        {
-          "id":  "강남구_2",
-          "name": "명미당 화방",
-          "location": { "latitude": 37.5033975, "longitude": 127.0490938 },
-          "address": "서울 강남구 선릉로 431 지하1층 명미당화방 B116호"
-        },
-        {
-          "id": "강남구_3",
-          "name": "윤화방",
-          "location": { "latitude": 37.4945817, "longitude": 127.0831376 },
-          "address": "서울특별시 강남구 일원동 624-2"
-        },
-        {
-          "id":  "강남구_4",
-          "name": "윤화방",
-          "location": { "latitude": 37.4892325, "longitude": 127.0677898 },
-          "address": "서울특별시 강남구 개포동 229-18번지"
-        },
-        {
-          "id":  "강남구_5",
-          "name": "크레용화방",
-          "location": { "latitude":37.4891361, "longitude":  127.067521 },
-          "address": "서울특별시 강남구 개포로 506"
-        },
-        {
-          "id":  "강남구_6",
-          "name": "모닝글로리 압구정점",
-          "location": { "latitude": 37.527532, "longitude": 127.0309072 },
-          "address": "서울 강남구 압구정로34길 11 압구정스퀘어 B/D B101호"
-        },
-        {
-          "id":  "강남구_7",
-          "name": "하이베스트문구 청담점",
-          "location": { "latitude": 37.5247969, "longitude": 127.0491686 },
-          "address": "서울 강남구 도산대로 511 지하 1층"
-        },
-        {
-          "id":  "강남구_8",
-          "name": "알파 선릉역점",
-          "location": { "latitude": 37.5035485, "longitude":127.0490615 },
-          "address": "서울특별시 강남구 역삼동 708-26"
-        },
-        {
-          "id":  "강남구_9",
-          "name": "알파 수서점",
-          "location": { "latitude": 37.4873264, "longitude": 127.1031402 },
-          "address": "서울특별시 강남구 광평로 280 지하 2층"
-        },
-        {
-          "id":  "강남구_10",
-          "name": "알파 양재점",
-          "location": { "latitude": 37.4867201, "longitude":  127.0359796 },
-          "address": "서울특별시 강남구 남부순환로359길 30"
-        },
-        {
-          "id":  "강남구_11",
-          "name": "알파 역삼남부점",
-          "location": { "latitude":  37.4960187, "longitude": 127.0401673 },
-          "address": "서울특별시 강남구 역삼로 208 남경빌딩 1층 알파 역삼남부점"
-        }
-      ]
-    },
-    {
-      "district": "강동구",
-      "center":{"latitude":37.55080940000001,"longitude":127.1440351},
-      "shops": [
-        {
-          "id": "강동구_1",
-          "name": "광영화방",
-          "location": { "latitude": 37.5395618, "longitude":127.1228238 },
-          "address": "서울특별시 강동구 천호대로151길 10"
-        },
-        {
-          "id": "강동구_2",
-          "name": "드림디포 굽은다리역점",
-          "location": { "latitude": 37.544584, "longitude": 127.142808 },
-          "address": "서울 강동구 양재대로 1566 지하층 드림디포"
-        }
-      ]
-    },
-    {
-      "district": "강북구",
-      "center":{"latitude": 37.6444906,"longitude": 127.010823},
-      "shops": [
-        {
-          "id": "강북구_1",
-          "name": "알파 미아삼거리점",
-          "location": { "latitude": 37.6130238, "longitude": 127.0289642 },
-          "address": "서울특별시 강북구 도봉로 45 숭인시장"
-        },
-        {
-          "id": "강북구_2",
-          "name": "알파 미아역점",
-          "location": { "latitude": 37.6267413, "longitude": 127.026306 },
-          "address": "서울특별시 강북구 도봉로 202"
-        }
-      ]
-    },
-    {
-      "district": "강서구",
-      "center":{"latitude":  37.5617969,"longitude":126.8070377},
-      "shops": [
-        {
-          "id": "강서구_1",
-          "name": "후후화방문구",
-          "location": { "latitude": 37.5483674, "longitude": 126.8338549 },
-          "address": "서울특별시 강서구 강서로45라길 12"
-        }
-      ]
-    },
-    {
-      "district": "관악구",
-      "center":{"latitude":37.4818452,"longitude": 126.9145619},
-      "shops": [
-        {
-          "id": "관악구_1",
-          "name": "서울대학교미술대학 구내화방",
-          "location": { "latitude":  37.5038296, "longitude":127.044828 },
-          "address": "서울특별시 관악구 관악로 1 서울대학교 미술대학(50동) 1층"
-        },
-        {
-          "id": "관악구_2",
-          "name": "알파 서울대역점",
-          "location": { "latitude": 37.4809291, "longitude":  126.9550788 },
-          "address": "서울특별시 관악구 남부순환로 1845-10"
-        },
-        {
-          "id": "관악구_3",
-          "name": "알파 보라매점",
-          "location": { "latitude": 37.4840722, "longitude":  126.9541686 },
-          "address": "서울특별시 관악구 봉천로 217 지하 1층 (B1)"
-        },
-        {
-          "id": "관악구_4",
-          "name": "알파 서울대점",
-          "location": { "latitude":37.4705587, "longitude": 126.9371853 },
-          "address": "서울특별시 관악구 신림로 109 지하1층"
-        }
-      ]
-    },
-    {
-      "district": "광진구",
-      "center":{"latitude":37.5451021,"longitude": 127.0854269},
-      "shops": [
-        {
-          "id": "광진구_1",
-          "name": "한양화방",
-          "location": { "latitude":   37.5456653, "longitude":127.0737278 },
-          "address": "서울특별시 광진구 능동로 170 한양화방"
-        },
-        {
-          "id": "광진구_2",
-          "name": "국제화방",
-          "location": { "latitude":37.55319000000001, "longitude": 127.0883048 },
-          "address": "서울특별시 광진구 천호대로 642-1 국제화방"
-        },
-        {
-          "id": "광진구_3",
-          "name": "서울화방",
-          "location": { "latitude": 37.5437505, "longitude":  127.0843953},
-          "address": "서울특별시 광진구 자양로 179"
-        },
-        {
-          "id": "광진구_4",
-          "name": "알파 중곡점",
-          "location": { "latitude":37.5597141, "longitude": 127.0805839 },
-          "address": "서울특별시 광진구 능동로 337"
-        },
-        {
-          "id": "광진구_5",
-          "name": "알파 한남점",
-          "location": { "latitude": 37.5333345, "longitude": 127.006752 },
-          "address": "서울특별시 용산구 대사관로 77"
-        }
+          "id": 1,
+          "name": "예제 화방",
+          "address": "123 Gangnam-daero, Seoul",
+          "phone": "02-123-4567",
+          "hours": "10:00 AM - 8:00 PM",
+          "inventory": 120,
+          "logo": "https://img1.daumcdn.net/thumb/R800x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbC8My4%2FbtqzLDcOBwt%2F4E2tEgQ46cLC0V6cfMpOd0%2Fimg.jpg",
+          "images": [
+            "https://dimg.donga.com/wps/NEWS/IMAGE/2023/11/16/122201297.1.jpg",
+            "https://compphoto.incruit.com/2015/10/%ED%9A%8C%ED%99%941.jpg",
+            "https://minio.nculture.org/amsweb-opt/multimedia_assets/222/111473/151708/c/%EC%84%9C%EC%9A%B8-%ED%98%B8%EB%AF%B8%ED%99%94%EB%B0%A9_%ED%98%B8%EB%AF%B8%ED%99%94%EB%B0%A9-%EB%82%B4%EB%B6%80-%283%29-medium-size.jpg",
+            "https://blog.kakaocdn.net/dn/ABnKe/btq5HLreel2/8qKUDHwa6O7s3DaBk3fgD1/img.jpg"
+          ],
+          "location": {
+            "latitude": 37.5014929,
+            "longitude": 127.051123
+          },
+          "materials": [
+            {
+              "name": "붓",
+              "stock": 10,
+              "image": "https://img.freepik.com/free-photo/gray-plain-concrete-textured-background_53876-129722.jpg"
+            },
+            {
+              "name": "물감",
+              "stock": 5,
+              "image":"https://blog.kakaocdn.net/dn/ABnKe/btq5HLreel2/8qKUDHwa6O7s3DaBk3fgD1/img.jpg"
 
-      ]
-    },
-    {
-      "district": "구로구",
-      "center":{"latitude": 37.4944134,"longitude": 126.8563336},
-      "shops": [
+            }
+          ]
+        },
         {
-          "id": "구로구_1",
-          "name": "드림디포 서서울점",
-          "location": { "latitude":  37.4968792, "longitude": 126.8618852 },
-          "address": "서울특별시 구로구 경인로 373 문화골든타워 지하1층"
+          "id": 2,
+          "name": "나라 화방",
+          "address": "서울시 강남구 테헤란로 123",
+          "phone": "02-123-4567",
+          "hours": "10:00 AM - 8:00 PM",
+          "inventory": 120,
+          "logo": "https://img1.daumcdn.net/thumb/R800x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2FbC8My4%2FbtqzLDcOBwt%2F4E2tEgQ46cLC0V6cfMpOd0%2Fimg.jpg",
+          "images": [
+            "https://dimg.donga.com/wps/NEWS/IMAGE/2023/11/16/122201297.1.jpg",
+            "https://compphoto.incruit.com/2015/10/%ED%9A%8C%ED%99%941.jpg",
+            "https://minio.nculture.org/amsweb-opt/multimedia_assets/222/111473/151708/c/%EC%84%9C%EC%9A%B8-%ED%98%B8%EB%AF%B8%ED%99%94%EB%B0%A9_%ED%98%B8%EB%AF%B8%ED%99%94%EB%B0%A9-%EB%82%B4%EB%B6%80-%283%29-medium-size.jpg",
+            "https://blog.kakaocdn.net/dn/ABnKe/btq5HLreel2/8qKUDHwa6O7s3DaBk3fgD1/img.jpg"
+          ],
+          "location": {
+            "latitude": 37.5014920,
+            "longitude": 127.051130
+          },
+          "materials": [
+            {
+              "name": "프리즈마 색연필 48색",
+              "stock": 20,
+              "image": "https://placehold.co/600x400"
+            },
+            {
+              "name": "팔레트",
+              "stock": 15,
+              "image": "https://placehold.co/600x400"
+            }
+          ]
         }
-      ]
-    },
-    {
-      "district": "노원구",
-      "center":{"latitude":37.6387848,"longitude":  127.0753809},
-      "shops": [
-        {
-          "id": "노원구_1",
-          "name": "나라아트화방",
-          "location": { "latitude":  37.62888969999999, "longitude": 127.076364},
-          "address": "서울특별시 노원구 공릉로51길 14-2"
-        },
-        {
-          "id": "노원구_2",
-          "name": "어의화방",
-          "location": { "latitude": 37.6329741, "longitude":  127.0798802 },
-          "address": "서울특별시 노원구 공릉로 232"
-        },
-        {
-          "id": "노원구_3",
-          "name": "알파화방문구",
-          "location": { "latitude": 37.4840722, "longitude":  126.9541686 },
-          "address": "서울특별시 관악구 봉천로 217 지하 1층 (B1)"
-        },
-        {
-          "id": "노원구_4",
-          "name": "설화방",
-          "location": { "latitude":37.62899609999999, "longitude": 127.0917163 },
-          "address": "서울특별시 노원구 화랑로 621 지층 B105호 조형예술관"
-        }
-      ]
-    },
-    {
-      "district": "동작구",
-      "center":{"latitude":37.4988794,"longitude":  126.9516345},
-      "shops": [
-        {
-          "id": "동작구_1",
-          "name": "모닝글로리 노량진점",
-          "location": { "latitude":   37.5134183, "longitude":126.9416735},
-          "address": "서울 동작구 노량진로 142"
-        },
-        {
-          "id": "동작구_2",
-          "name": "알파 중앙대점",
-          "location": { "latitude": 37.5089962, "longitude":126.9621148 },
-          "address": "서울특별시 동작구 흑석로 122"
-        },
-        {
-          "id": "동작구_3",
-          "name": "알파 숭실대역점",
-          "location": { "latitude": 37.49288260000001, "longitude":  126.954054 },
-          "address": "서울특별시 동작구 상도로60길 1 지하1층"
-        }
-      ]
-    },
-    {
-      "district": "마포구",
-      "center":{"latitude":37.5580889,"longitude": 126.9083451},
-      "shops": [
-        {
-          "id": "마포구_1",
-          "name": "호미화방",
-          "location": { "latitude":    37.5537509, "longitude":126.9219046},
-          "address": "서울특별시 마포구 홍익로3길 20 서교프라자 1층,2층"
-          
-        },
-        {
-          "id": "마포구_2",
-          "name": "세일화방",
-          "location": { "latitude": 37.5530745, "longitude":126.9272345 },
-          "address": "서울특별시 마포구 와우산로26길 9-19 지하1층"
-        },
-        {
-          "id": "마포구_3",
-          "name": "동인화방",
-          "location": { "latitude":  37.5565064, "longitude":   126.9311406},
-          "address": "서울특별시 마포구 와우산로 175"
-        },
-        {
-          "id": "마포구_4",
-          "name": "하나화방",
-          "location": { "latitude": 37.5538026, "longitude": 126.92835},
-          "address": "서울특별시 마포구 와우산로 133-1"
-        },
-        {
-          "id": "마포구_5",
-          "name": "피카소화방액자",
-          "location": { "latitude": 37.5540047, "longitude": 126.9187158 },
-          "address": "서울특별시 마포구 월드컵북로1길 52 1층 피카소화방"
-        },
-        {
-          "id": "마포구_6",
-          "name": "개미화방",
-          "location": { "latitude":  37.5534068, "longitude": 126.9251659},
-          "address": "서울특별시 마포구 와우산로 105"
-        },
-        {
-          "id": "마포구_7",
-          "name": "세종화방",
-          "location": { "latitude": 37.5536267, "longitude": 126.9263948},
-          "address": "서울특별시 마포구 와우산로 117 1층"
-        },
-        {
-          "id": "마포구_8",
-          "name": "청호화방",
-          "location": { "latitude": 37.5543072, "longitude":  126.9291885 },
-          "address": "서울특별시 마포구 와우산로 145"
-        },
-        {
-          "id": "마포구_9",
-          "name": "송이아트화방",
-          "location": { "latitude":  37.552984, "longitude": 126.9249847 },
-          "address": "서울특별시 마포구 와우산로 104"
-        },
-        {
-          "id": "마포구_10",
-          "name": "현대화방",
-          "location": { "latitude": 37.553327, "longitude": 126.9274573 },
-          "address": "서울특별시 마포구 와우산로 126"
-        },
-        {
-          "id": "마포구_11",
-          "name": "갤러리성 화방",
-          "location": { "latitude": 37.5532058, "longitude": 126.9272125 },
-          "address": "서울특별시 마포구 와우산로 124 대우빌딩 1층"
-        },
-        {
-          "id": "마포구_12",
-          "name": "삼성화방",
-          "location": { "latitude": 37.5533714, "longitude":  126.9279696 },
-          "address": "서울특별시 마포구 와우산로 130"
-        },
-        {
-          "id": "마포구_13",
-          "name": "신촌화방갤러리",
-          "location": { "latitude":  37.5565293, "longitude": 126.9453379 },
-          "address": "서울특별시 마포구 신촌로 178"
-        },
-        {
-          "id": "마포구_14",
-          "name": "종호화방",
-          "location": { "latitude":  37.5535733, "longitude": 126.9090865 },
-          "address": "서울특별시 마포구 동교로 61-1 B1"
-        },
-        {
-          "id": "마포구_15",
-          "name": "한가람문구 홍익대점",
-          "location": { "latitude": 37.5507254, "longitude": 126.9256382},
-          "address": "서울특별시 마포구 와우산로 94 홍익대학교 홍문관내 로비층"
-        },
-        {
-          "id": "마포구_16",
-          "name": "알파 마포점",
-          "location": { "latitude": 37.53976040000001, "longitude": 126.9451405 },
-          "address": "서울특별시 마포구 마포대로 33 한화오벨리스크 오피스텔동 지하1층"
-        }
-      ]
-    },
-    {
-      "district": "서대문구",
-      "center":{"latitude": 37.576424,"longitude":  126.9354389},
-      "shops": [
-        {
-          "id": "서대문구_1",
-          "name": "신촌화방",
-          "location": { "latitude": 37.5625607, "longitude":  126.9474535 },
-          "address": "서울특별시 서대문구 이화여대길 52 (대현동) 조형예술대A동 1층 구내화방(신촌화방)"
-        },
-        {
-          "id": "서대문구_2",
-          "name": "알파 서대문점",
-          "location": { "latitude": 37.5682816, "longitude":  126.9639445 },
-          "address": "서울특별시 서대문구 통일로 161"
-        }
-      ]
-    },
-    {
-      "district": "서초구",
-      "center":{"latitude":  37.4732933,"longitude":  127.0312101},
-      "shops": [
-        {
-          "id": "서초구_1",
-          "name": "한가람문구",
-          "location": { "latitude":37.5054942, "longitude":  127.006719 },
-          "address": "서울특별시 서초구 신반포로 194 강남고속버스터미널 경부선빌딩 지하1층"
-        },
-        {
-          "id": "서초구_2",
-          "name": "알파 강남본점",
-          "location": { "latitude":37.496621, "longitude":   127.0276168 },
-          "address": "서울특별시 서초구 강남대로 381 두산베어스텔 B1"
-        },
-        {
-          "id": "서초구_3",
-          "name": "알파 교대점",
-          "location": { "latitude":  37.4939301, "longitude": 127.0153365 },
-          "address": "서울특별시 서초구 서초대로 308 지하1층"
-        },
-        {
-          "id": "서초구_4",
-          "name": "알파 서초남부점",
-          "location": { "latitude":37.48525840000001, "longitude": 127.0184789 },
-          "address": "서울특별시 서초구 효령로 314 1층 알파"
-        },
-        {
-          "id": "서초구_5",
-          "name": "알파 내방역점",
-          "location": { "latitude": 37.4875368, "longitude": 126.9943012 },
-          "address": "서울특별시 서초구 서초대로 108"
-        },
-        {
-          "id": "서초구_6",
-          "name": "알파 방배역점",
-          "location": { "latitude": 37.4828734, "longitude":  126.9963375 },
-          "address": "서울 서초구 방배로 97"
-        },
-        {
-          "id": "서초구_7",
-          "name": "알파 양재에이티점",
-          "location": { "latitude": 37.4786172, "longitude": 127.0360752 },
-          "address": "서울특별시 서초구 강남대로 27"
-        },
-        {
-          "id": "서초구_8",
-          "name": "알파 방배효령점",
-          "location": { "latitude": 37.4780145, "longitude": 126.9875807 },
-          "address": "서울 서초구 효령로 27"
-        },
-        {
-          "id": "서초구_9",
-          "name": "알파 사당역점",
-          "location": { "latitude":37.4800489, "longitude":126.9822021},
-          "address": "서울 서초구 동작대로 40 1층 알파문구"
-        },
-        {
-          "id": "서초구_10",
-          "name": "알파 서초방배점",
-          "location": { "latitude": 37.4808512, "longitude": 126.9974978 },
-          "address": "서울 서초구 방배로 73 SK증권 B01"
-        },
-        {
-          "id": "서초구_11",
-          "name": "알파 반포점",
-          "location": { "latitude": 37.4983778, "longitude":  126.9981649 },
-          "address": "서울 서초구 서래로 37 지하"
-        },
-        {
-          "id": "서초구_12",
-          "name": "알파 방배점",
-          "location": { "latitude":  37.4866936, "longitude":126.9857838 },
-          "address": "서울 서초구 도구로 115 1층, 2층 알파 방배점"
-        },
-        {
-          "id": "서초구_13",
-          "name": "알파 서초법원점",
-          "location": { "latitude": 37.4957919, "longitude": 127.014525 },
-          "address": "서울 서초구 서초중앙로26길 11 청림빌딩2 지하2층"
-        }
-      ]
-    },
-    {
-      "district": "성동구",
-      "center":{"latitude": 37.5582392,"longitude":  127.0389744},
-      "shops": [
-        {
-          "id": "성동구_1",
-          "name": "배명문구센터",
-          "location": { "latitude":  37.5628696, "longitude":  127.0342419},
-          "address": "서울특별시 성동구 왕십리로 350 BM빌딩 B1,B2"
-        },
-        {
-          "id": "성동구_2",
-          "name": "드림디포 한양대점",
-          "location": { "latitude": 37.5616661, "longitude": 127.0413801 },
-          "address": "서울특별시 성동구 마조로 45 조양빌딩 1층"
-        }
-      ]
-    },
-    {
-      "district": "성북구",
-      "center":{"latitude": 37.6056991,"longitude": 127.0175664},
-      "shops": [
-        {
-          "id": "성북구_1",
-          "name": "나라화방",
-          "location": { "latitude":  37.5892708, "longitude":  127.0200132 },
-          "address": "서울특별시 성북구 보문로30가길 6"
-        },
-        {
-          "id": "성북구_2",
-          "name": "미술넷커뮤니케이션",
-          "location": { "latitude": 37.5953322, "longitude":  127.0187137 },
-          "address": "서울특별시 성북구 동소문로25길 20-16 미술넷커뮤니케이션"
-        }
-      ]
-    },
-    {
-      "district": "송파구",
-      "center":{"latitude":  37.5056205,"longitude": 127.1152992},
-      "shops": [
-        {
-          "id": "송파구_1",
-          "name": "한가람화방",
-          "location": { "latitude":   37.5096163, "longitude":  127.112968},
-          "address": "서울특별시 송파구 오금로 168 유남빌딩 1층"
-        },
-        {
-          "id": "송파구_2",
-          "name": "강동화방",
-          "location": { "latitude":37.5074069, "longitude":127.1168289},
-          "address": "서울특별시 송파구 오금로 210"
-        },
-        {
-          "id": "송파구_3",
-          "name": "잠실화방",
-          "location": { "latitude":  37.5026284, "longitude":  127.1117916 },
-          "address": "서울특별시 송파구 가락로 145 승진빌딩"
-        },
-        {
-          "id": "송파구_4",
-          "name": "예림문구화방",
-          "location": { "latitude": 37.5953322, "longitude":  127.0187137 },
-          "address": "서울특별시 송파구 석촌호수로 58 동신빌딩"
-        },
-        {
-          "id": "송파구_5",
-          "name": "인앤아트컴퍼니",
-          "location": { "latitude": 37.5953322, "longitude":  127.0187137 },
-          "address": "서울특별시 성북구 동소문로25길 20-16 미술넷커뮤니케이션"
-        },
-        {
-          "id": "송파구_6",
-          "name": "알파 올림픽점",
-          "location": { "latitude": 37.5953322, "longitude":  127.0187137 },
-          "address": "서울특별시 성북구 동소문로25길 20-16 미술넷커뮤니케이션"
-        },
-        {
-          "id": "송파구_7",
-          "name": "드림디포 송파역점",
-          "location": { "latitude": 37.5953322, "longitude":  127.0187137 },
-          "address": "서울특별시 성북구 동소문로25길 20-16 미술넷커뮤니케이션"
-        },
-        {
-          "id": "송파구_8",
-          "name": "알파 송파한양점",
-          "location": { "latitude": 37.5953322, "longitude":  127.0187137 },
-          "address": "서울특별시 성북구 동소문로25길 20-16 미술넷커뮤니케이션"
-        }
-
-
       ]
     }
-    
-    
-
-
   ]
 }

@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, TextInput, Button, Alert } from 'react-native';
-import MapView, { Marker, Callout } from 'react-native-maps';
+import {
+  View, Text, StyleSheet, TouchableOpacity,
+  ScrollView, Alert, FlatList, Image
+} from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import shopData from './data/shops.json'; // shops 데이터 불러오기
+import shopData from './data/shops.json'; // 초기 shops 데이터
 import siGunguData from './data/siGungu.json'; // 시군구 데이터 불러오기
 import AntDesign from '@expo/vector-icons/AntDesign';
 import SearchBar from '../Search/SearchContainer';
+import ShopInfo from './ShopInfo'; // ShopInfo 컴포넌트 가져오기
+import MaterialInfo from './MaterialInfo';
+import { useNavigation } from 'expo-router';
+
 const MapScreen = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -16,10 +23,13 @@ const MapScreen = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [region, setRegion] = useState(null);
   const [locationGranted, setLocationGranted] = useState(false);
-  const [searchText, setSearchText] = useState(''); // 검색어 상태 추가
-  
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [shops, setShops] = useState([]);
+  const [selectedShops, setSelectedShops] = useState([]); // 검색된 상점들 저장
+  const [searchType, setSearchType] = useState('shop');
+  const navigation = useNavigation(); // Navigation hook
 
-  
   useEffect(() => {
     const cities = siGunguData.map(area => ({
       label: area.name,
@@ -61,36 +71,57 @@ const MapScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedDistrict && selectedCity && shopData[selectedCity]) {
-      const districtData = shopData[selectedCity].find(district => district.district === selectedDistrict);
-      if (districtData) {
-        setRegion({
-          latitude: districtData.center.latitude,
-          longitude: districtData.center.longitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        });
-      }
+    if (selectedDistrict && selectedCity) {
+      fetchShopsData(selectedCity, selectedDistrict);
     }
   }, [selectedDistrict, selectedCity]);
 
+  const fetchShopsData = async (city, district) => {
+    try {
+      console.log("Fetching data for city:", city, "and district:", district);
+
+      const cityData = shopData[city];
+      if (!cityData) {
+        console.error("No data found for city:", city);
+        return;
+      }
+
+      const districtData = cityData.find(d => d.district === district);
+      if (!districtData) {
+        console.error("No data found for district:", district);
+        return;
+      }
+
+      setShops(districtData.shops);
+      setRegion({
+        latitude: districtData.center.latitude,
+        longitude: districtData.center.longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      });
+
+    } catch (error) {
+      console.error('Failed to fetch shop data:', error);
+    }
+  };
+
   const handleCitySelect = (city) => {
     setSelectedCity(city);
-    setSelectedDistrict(null); // 시가 바뀔 때 군/구 초기화
+    setSelectedDistrict(null);
   };
 
   const handleDistrictSelect = (district) => {
     setSelectedDistrict(district);
-    setShowDropdown(false); // 드롭다운 닫기
+    setShowDropdown(false);
   };
 
   const toggleDropdown = () => {
-    setShowDropdown(!showDropdown); // 드롭다운 토글
+    setShowDropdown(!showDropdown);
   };
 
   const getAllShops = () => {
     let allShops = [];
-    for (const city in shopData) { // shopData로 수정
+    for (const city in shopData) {
       shopData[city].forEach(district => {
         allShops = allShops.concat(district.shops);
       });
@@ -98,24 +129,76 @@ const MapScreen = () => {
     return allShops;
   };
 
-
   const handleSearch = () => {
+    // 상점 이름 검색
     const allShops = getAllShops();
-    const matchedShop = allShops.find(shop => shop.name.includes(searchText));
+    const matchedShops = allShops.filter(shop =>
+      shop.name.toLowerCase().includes(searchText.toLowerCase())
+    );
 
-    if (matchedShop) {
+    // 재료 검색
+    let results = [];
+
+    for (const city in shopData) {
+      for (const districtData of shopData[city]) {
+        for (const shop of districtData.shops) {
+          const matchingMaterials = shop.materials.filter(material =>
+            material.name.toLowerCase().includes(searchText.toLowerCase())
+          );
+
+          if (matchingMaterials.length > 0) {
+            results.push({
+              shop,
+              materials: matchingMaterials
+            });
+          }
+        }
+      }
+    }
+
+    if (matchedShops.length > 0) {
+      setSelectedShops(matchedShops);
       setRegion({
-        latitude: matchedShop.location.latitude,
-        longitude: matchedShop.location.longitude,
+        latitude: matchedShops[0].location.latitude, // 첫 번째 상점의 위치로 지도 중심 설정
+        longitude: matchedShops[0].location.longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       });
-    } else {
+    } else if (results.length === 0) {
       Alert.alert('검색 결과 없음', '해당 이름의 화방을 찾을 수 없습니다.');
+      setSelectedShops([]); // 상점 이름 검색 결과가 없으면 선택된 상점 초기화
+    }
+
+    if (results.length > 0) {
+      setSearchResults(results);
+    } else if (matchedShops.length === 0) {
+      Alert.alert('검색 결과 없음', '검색 결과가 없습니다.');
     }
   };
+  const handleMaterialPress = (material, shop) => {
+    navigation.navigate('MaterialDetailScreen', { material, shop });
+  };
 
-  const shops = getAllShops();
+  const renderResultItem = ({ item }) => (
+    <View style={styles.resultItem}
+  >
+      <View style={styles.header1}>
+        <Image source={{ uri: item.shop.logo }} style={styles.logo} />
+        <Text style={styles.shopName}>{item.shop.name}</Text>
+      </View>
+      {item.materials.map(material => (
+    
+          <View key={material.name} style={styles.materialItem}>
+          {material.image && <Image source={{ uri: material.image }} style={styles.materialImage} />}
+            <Text style={styles.materialName}>{material.name}</Text>
+            <Text style={styles.materialStock}>재고: {material.stock} 개</Text>
+            
+          </View>
+      
+      ))}
+    
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -178,47 +261,76 @@ const MapScreen = () => {
         </View>
       )}
 
+
+
       <MapView
         style={styles.map}
         region={region}
         showsUserLocation={true}
       >
-        {shops.map(shop => (
+        {selectedShops.map(shop => (
           <Marker
             key={shop.id}
             coordinate={shop.location}
             title={shop.name}
             description={shop.address}
-          >
-            <Callout tooltip>
-              <View style={styles.calloutContainer}>
-                <Text style={styles.calloutTitle}>{shop.name}</Text>
-                <Text style={styles.calloutText}>{shop.address}</Text>
-                {shop.image && (
-                  <Image source={{ uri: shop.image }} style={styles.calloutImage} />
-                )}
-              </View>
-            </Callout>
-          </Marker>
+            onPress={() => setSelectedShops([shop])} // 하나의 상점을 선택했을 때 해당 상점만 표시
+          />
         ))}
       </MapView>
+      {searchType === 'shop' && selectedShops.length > 0 && (
+        <FlatList
+          data={selectedShops} // 선택된 상점들을 표시
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => navigation.navigate('ShopDetailScreen', { shop: item })}>
+              <ShopInfo shop={item} />
+            </TouchableOpacity>
+          )}
+          keyExtractor={item => item.id.toString()}
+          contentContainerStyle={styles.flatListContainer}
+        />
+      )}
+
+
+<FlatList
+  data={searchResults}
+  renderItem={({ item }) => (
+    item.materials.map((material) => (
+      <TouchableOpacity
+        key={material.name}
+        onPress={() => navigation.navigate('MaterialDetailScreen', { shop: item.shop, material })}
+      >
+        <MaterialInfo shop={item.shop} material={material} />
+      </TouchableOpacity>
+    ))
+  )}
+  keyExtractor={(item, index) => index.toString()}
+  contentContainerStyle={styles.resultList}
+/>
+
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'#ffffff',
-    
-    margin:-20
+    backgroundColor: '#ffffff',
+    margin:-15
+
+  }, logo: {
+    width: 38,
+    height: 38,
+    borderRadius: 25,
+    marginBottom: 15,
+    // resizeMode: 'cover',
+  },
+  header1: {
+    flexDirection: 'row',
+    alignItems:'center'
   },
   map: {
-    width: 420,
+    width: '100%',
     height: 245,
-   // right: 15,
-    margin:0,
-    padding:0
   },
   searchBarContainer: {
     flexDirection: 'row',
@@ -226,16 +338,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     backgroundColor: '#ffffff',
-    
-  },
-  searchInput: {
-    flex: 1,
-    padding: 10,
-    backgroundColor: '#fff',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginRight: 10,
   },
   header: {
     height: 50,
@@ -257,7 +359,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#000',
-    right: 270,
   },
   dropdownContainer: {
     backgroundColor: '#fff',
@@ -265,12 +366,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 5,
     position: 'absolute',
-    top: 100, // 헤더 바로 아래에 위치
+    top: 100,
     left: 0,
     right: 0,
     zIndex: 1000,
-    maxHeight: '70%', // 드롭다운의 최대 높이 설정
-    flexDirection: 'row'
+    maxHeight: '70%',
+    flexDirection: 'row',
   },
   leftColumn: {
     width: 118,
@@ -279,7 +380,6 @@ const styles = StyleSheet.create({
   },
   rightColumn: {
     width: 314,
-    right: 30
   },
   columnContent: {
     justifyContent: 'center',
@@ -303,7 +403,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#2b4872',
     top: 20,
-    height: 60
+    height: 60,
   },
   line: {
     width: '90%',
@@ -311,28 +411,59 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     marginTop: 5,
   },
-  calloutContainer: {
-    width: 209,
-    height: 136,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+  flatListContainer: {
+    flexGrow: 1,
   },
-  calloutTitle: {
+  resultList: {
+    flexGrow: 1,
+  },
+  resultItem: {
+    marginBottom: 20,
+    padding: 10,
+    //borderBottomWidth: 1,
+    borderColor: '#ccc',
+    //alignItems:'center'
+  },
+  shopName: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginLeft: 20,
+    bottom:5
+  },
+  shopAddress: {
+    fontSize: 16,
+    color: '#555',
+  },
+  shopPhone: {
+    fontSize: 14,
+    color: '#777',
+  },
+  shopHours: {
+    fontSize: 14,
+    color: '#777',
+  },
+  materialItem: {
+    //marginTop: 10,
+  // padding: 5,
+    //borderTopWidth: 1,
+    //borderColor: '#eee',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  materialName: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 5,
   },
-  calloutText: {
-    fontSize: 9,
-    textAlign: 'center',
-    marginBottom: 5,
+  materialStock: {
+    fontSize: 13,
+    color: '#2b4872',
   },
-  calloutImage: {
-    width: 100,
-    height: 50,
+  materialImage: {
+    width: 139,
+    height: 76,
+    marginTop: 5,
+   // borderWidth: 1
   },
 });
 

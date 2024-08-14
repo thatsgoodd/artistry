@@ -9,7 +9,7 @@ import { usePosts } from './PostContext'; // PostContext 가져오기
 
 const EditPost = ({ route, navigation }) => {
   const { post } = route.params; // 부모 컴포넌트로부터 전달받은 게시글 데이터
-  const [posts, setPosts] = usePosts(); // PostContext에서 setPost 함수 가져오기
+  const {posts, setPosts}= usePosts(); // PostContext에서 setPost 함수 가져오기
 
   const [title, setTitle] = useState(post.title);
   const [content, setContent] = useState(post.content);
@@ -19,36 +19,34 @@ const EditPost = ({ route, navigation }) => {
 
   // PhotoPicker 훅 사용
   const { handleCameraLaunch, handleImageLibraryLaunch } = usePhotoPicker(setPhoto);
-
   useEffect(() => {
+    console.log('Initial Post:', post); // 초기 게시글 데이터 로그
     setTitle(post.title);
     setContent(post.content);
     setPhoto(post.photo);
     setPreviewPhoto(post.photo); // 게시글 변경 시 미리보기 사진도 설정
   }, [post]);
+  
 
   const handleSave = () => {
-    if (title.trim() === '' || content.trim() === '') {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
+    if (title.trim() && content.trim()) {
+      const updatedPost = { ...post, title, content, photo };
+      
+      console.log('Updated Post:', updatedPost); // 수정된 게시글 로그
+  
+      const updatedPosts = posts.map(p =>
+        p.id === post.id ? updatedPost : p
+      );
+  
+      console.log('Updated Posts:', updatedPosts); // 수정된 모든 게시글 로그
+  
+      setPosts(updatedPosts); // 수정된 게시글을 PostContext에 저장
+      navigation.goBack(); // 저장 후 이전 화면으로 돌아가기
+    } else {
+      Alert.alert('Error', 'Please fill in both fields'); // 필드가 비어있을 경우 경고 알림
     }
-
-    const updatedPost = {
-      ...post,
-      title,
-      content
-    };
-    if (!Array.isArray(posts)) {
-      console.error('Posts state is not an array');
-      return;
-    }
-    
-    const updatedPosts = posts.map(p => (p.id === post.id ? updatedPost : p));
-    setPosts(updatedPosts); // 상태 업데이트
-
-    Alert.alert('Success', 'Post updated successfully');
-    navigation.goBack(); // 수정 후 이전 화면으로 돌아가기
   };
+  
 
   return (
     <SafeAreaView style={styles.container}>
@@ -82,6 +80,7 @@ const EditPost = ({ route, navigation }) => {
             )}
           </View>
           <TouchableOpacity style={styles.submitButton} onPress={handleSave}>
+            
             <Text style={styles.submitButtonText}>등록</Text>
           </TouchableOpacity>
         </View>

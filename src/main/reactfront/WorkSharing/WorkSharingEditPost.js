@@ -1,4 +1,4 @@
-import React, { useState,useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet,
   Image, Modal, ScrollView, TouchableWithoutFeedback,
@@ -7,7 +7,7 @@ import {
 import { useWorkSharingPosts } from './WorkSharingContext';
 import { usePhotoPicker } from '../PhotoPicker';
 
-const WorkSharingWritePost = ({ navigation }) => {
+const WorkSharingEditPost = ({ route, navigation }) => {
   const { posts, setPosts } = useWorkSharingPosts();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -22,7 +22,41 @@ const WorkSharingWritePost = ({ navigation }) => {
     setImageUrls([...imageUrls, uri]);
   });
 
-  const scrollViewRef = useRef(null);
+  // postId가 문자열인 경우, 문자열로 처리하기 위해 String() 사용
+  const { postId } = route.params || {};
+
+  if (typeof postId === 'string') {
+    console.log('postId는 문자열입니다.');
+  } else if (typeof postId === 'number') {
+    console.log('postId는 숫자입니다.');
+  } else {
+    console.log('postId의 타입은 알 수 없습니다.');
+  }
+  
+
+
+  const postIdStr = String(postId); // postId를 문자열로 변환
+
+  useEffect(() => {
+    const postIdStr = String(postId); // postId를 문자열로 변환
+    console.log('postId:', postIdStr); // postId 확인
+  
+    if (postIdStr) {
+      const postToEdit = posts.find(post => String(post.id) === postIdStr); // post.id를 문자열로 변환하여 비교
+      console.log('postToEdit:', postToEdit); // 로드된 게시물 확인
+      if (postToEdit) {
+        setTitle(postToEdit.title);
+        setContent(postToEdit.content);
+        setCategoryId(postToEdit.categoryId.split(', '));
+        setImageUrls(postToEdit.photos);
+      } else {
+        console.log('Post not found');
+      }
+    } else {
+      console.log('No postId provided');
+    }
+  }, [postId, posts]);
+  
 
   const showAlert = (message) => {
     setAlertMessage(message);
@@ -31,7 +65,6 @@ const WorkSharingWritePost = ({ navigation }) => {
       setAlertModalVisible(false);
     }, 2000);
   };
-
   const handleSubmit = () => {
     if (!title || !content || categoryId.length === 0) {
       showAlert('모든 필드를 입력해주세요.');
@@ -41,23 +74,30 @@ const WorkSharingWritePost = ({ navigation }) => {
       showAlert('한 장 이상의 사진을 업로드 해주세요.');
       return;
     }
-
-    const newPost = {
-      id: (posts.length + 1).toString(), // 새로운 ID 생성
+  
+    const updatedPost = {
+      id: postIdStr, // postId를 문자열로 설정
       title,
       content,
-      categoryId: categoryId.join(', '), // 배열을 문자열로 변환하여 저장
+      categoryId: categoryId.join(', '),
       photos: imageUrls,
       profile: 'https://example.com/default-profile.png',
       name: '작성자 이름',
       bookmarkCount: 0,
       likes: 0,
     };
-
-    setPosts(prevPosts => [...prevPosts, newPost]);
-
+  
+    console.log('Updated Post:', updatedPost); // 수정된 게시물 로그
+  
+    setPosts(prevPosts => {
+      const updatedPosts = prevPosts.map(post => String(post.id) === postIdStr ? updatedPost : post);
+      console.log('Updated Posts:', updatedPosts); // 업데이트된 게시물 로그
+      return updatedPosts;
+    });
+  
     navigation.goBack();
   };
+  
 
   const handleCategorySelect = (category) => {
     setCategoryId(prev => prev.includes(category)
@@ -69,28 +109,19 @@ const WorkSharingWritePost = ({ navigation }) => {
   const handleRemoveImage = (uri) => {
     setImageUrls(imageUrls.filter(image => image !== uri));
   };
-  const handleFocus = (fieldYPosition) => {
-    scrollViewRef.current?.scrollTo({
-      y: fieldYPosition,
-      animated: true,
-    });
-  };
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
     >
-      <ScrollView 
-      contentContainerStyle={styles.scrollViewContent}
-      ref={scrollViewRef}
-      showsVerticalScrollIndicator={false}
-      >
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <TouchableOpacity
           style={styles.submitButton}
           onPress={handleSubmit}
         >
-          <Text style={styles.submitButtonText}>저장</Text>
+          <Text style={styles.submitButtonText}>수정</Text>
         </TouchableOpacity>
 
         <View style={styles.photoSection}>
@@ -120,7 +151,6 @@ const WorkSharingWritePost = ({ navigation }) => {
           placeholder="제목"
           value={title}
           onChangeText={setTitle}
-          onFocus={()=>handleFocus(200)}
         />
 
         <TextInput
@@ -129,7 +159,6 @@ const WorkSharingWritePost = ({ navigation }) => {
           multiline
           value={content}
           onChangeText={setContent}
-          onFocus={()=>handleFocus(400)}
         />
 
         <TouchableOpacity
@@ -227,20 +256,6 @@ const WorkSharingWritePost = ({ navigation }) => {
             </View>
           </TouchableWithoutFeedback>
         </Modal>
-
-        {/* 경고 모달 */}
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={alertModalVisible}
-          onRequestClose={() => setAlertModalVisible(false)}
-        >
-          <View style={styles.alertOverlay}>
-            <View style={styles.alertContainer}>
-              <Text style={styles.alertText}>{alertMessage}</Text>
-            </View>
-          </View>
-        </Modal>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -251,7 +266,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
     justifyContent: 'flex-end'
-  }, 
+  },
   scrollViewContent: {
     flexGrow: 1,
     justifyContent: 'center',
@@ -457,4 +472,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WorkSharingWritePost;
+export default WorkSharingEditPost;

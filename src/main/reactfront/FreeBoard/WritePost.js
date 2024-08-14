@@ -1,12 +1,14 @@
 // WritePost.js
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Modal, Alert, TouchableWithoutFeedback } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity,
+   StyleSheet, Image, Modal, Alert, TouchableWithoutFeedback 
+  } from 'react-native';
 import { usePosts } from './PostContext';
 import { usePhotoPicker } from '../PhotoPicker'; // 사진 선택 기능 훅 가져오기
 
 
 const WritePost = ({ navigation }) => {
-  const [posts, setPosts] = usePosts();
+  const { posts, setPosts } = usePosts();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
@@ -14,17 +16,18 @@ const WritePost = ({ navigation }) => {
   const { photo, handleCameraLaunch, handleImageLibraryLaunch } = usePhotoPicker(setPreviewPhoto); // 선택된 사진의 URI를 상태로 업데이트
 
   
-  const handleSubmit = () => {
+  const handleSubmit = () => {//살짝다름
     if (title.trim() === '' || content.trim() === '') {
       Alert.alert('입력 오류', '제목과 내용을 모두 입력해 주세요.');
       return;
     }
 
-    const formatDate = (date) =>{
-      const hours =date.getHours().toString().padStart(2,'0');
-      const minutes =date.getMinutes().toString().padStart(2,'0');
-       return `${hours}:${minutes}`;
-    }
+    const formatDate = (date) => {
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    };
+
     const newPost = {
       id: Date.now().toString(),
       title,
@@ -35,12 +38,11 @@ const WritePost = ({ navigation }) => {
       photo: previewPhoto ? previewPhoto : null,
     };
 
-    setPosts(prevPosts => [...prevPosts, newPost]);
+    setPosts([...posts, newPost]); // 새 게시글 추가
     Alert.alert('게시물 작성 완료', '게시물이 성공적으로 작성되었습니다.', [
-      { text: '확인', onPress: () => navigation.goBack() }
+      { text: '확인', onPress: () =>navigation.navigate('FreeBoard') }
     ]);
   };
-
   return (
     <View style={styles.container}>
       

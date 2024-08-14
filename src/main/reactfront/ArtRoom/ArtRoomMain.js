@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Button, Alert, Picker } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import RNPickerSelect from 'react-native-picker-select';
-import Dropdowns from './Dropdowns';
+import { View, StyleSheet} from 'react-native';
 import MapScreen from './MapScreen';
 
 
 
 const ArtRoomMain = () => {
+
   return (
     <View style={styles.container}>
-      {/* <Dropdowns /> */}
       <MapScreen/>
     </View>
   );

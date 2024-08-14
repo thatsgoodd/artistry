@@ -4,19 +4,18 @@ import {
   KeyboardAvoidingView, Platform, SafeAreaView,
   TouchableOpacity, Modal, Keyboard
 } from 'react-native';
-import Feather from '@expo/vector-icons/Feather';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
-import { useNavigation } from '@react-navigation/native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import CommentSection from '../Comments/CommentSection';  // CommentSection 컴포넌트 가져오기
 import { usePosts } from './PostContext';
+import initialPosts from './posts';
 
-const ViewPost = ({ route }) => {
-  const { post } = route.params;
-  const { setPosts } = usePosts(); // usePosts에서 setPosts 가져오기
-  const navigation = useNavigation();
-  const [likes, setLikes] = useState(post.likes);
+const ViewPost = ({ route, navigation }) => {
+  const { post: initialPost } = route.params;
+  const { posts, setPosts ,toggleLike, addComment, deletePost} = usePosts();
+  console.log('Posts:', posts); // Ensure `setPosts` is correctly fetched
+  const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
@@ -24,28 +23,39 @@ const ViewPost = ({ route }) => {
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [contentModalVisible, setContentModalVisible] = useState(false);
 
-  // 게시글 업데이트 감지 및 상태 업데이트
-  useEffect(() => {
-    if (post) {
-      setLikes(post.likes);
-      setLiked(post.liked);
-      setComments(Array.isArray(post.comments) ? post.comments : []); // comments 배열 타입 확인
-    }
-  }, [post.id]);
+  const post = posts.find(p => p.id === initialPost.id);
+if (!post) {
+  console.log('Post not found');
+} else {
+  console.log('Post comments:', Array.isArray(post.comments), post.comments);
+}
 
+useEffect(() => {
+  if (post) {
+    setComments(post.comments || []); // comments가 배열이 아니면 빈 배열로 초기화
+  }
+}, [post]);
+
+  // Check if post is found
   if (!post) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>게시물을 찾을 수 없습니다.</Text>
-      </View>
-    );
+    return <Text style={styles.errorText}>Post not found</Text>;
   }
 
-  const handleLikeDislike = () => {
-    setLikes(likes + (liked ? -1 : 1));
-    setLiked(!liked);
-  };
+  useEffect(() => {
+    setLikes(post.likes);
+    setLiked(post.liked || false); // Assuming `liked` is part of the post object
+  }, [post]);
 
+  useEffect(() => {
+    if (post) {
+      console.log('Post comments on load:', post.comments);
+      setComments(post.comments || []);
+    }
+  }, [post]);
+  
+  const handleLikeDislike = () => {
+    toggleLike(post.id); // 전역 상태의 좋아요 관리
+  };
   const handleAddComment = () => {
     if (newComment.trim()) {
       const newCommentObj = {
@@ -60,11 +70,14 @@ const ViewPost = ({ route }) => {
           profileImage: 'https://placekitten.com/200/200',
         }
       };
-      setComments([...comments, newCommentObj]);
+      const updatedComments = [...comments, newCommentObj];
+      console.log('Updated Comments:', updatedComments); // 상태 업데이트 확인
+      setComments(updatedComments);
       setNewComment('');
       Keyboard.dismiss();
     }
   };
+  
 
   const openContentModal = () => {
     setContentModalVisible(true);
@@ -74,22 +87,15 @@ const ViewPost = ({ route }) => {
     setContentModalVisible(false);
   };
 
-  const handleEdit = (updatedPost) => {
-    navigation.navigate('EditPost', {
-      post,
-      onSave: (updatedPost) => {
-        setPosts((prevPosts) =>
-          prevPosts.map((p) => (p.id === updatedPost.id ? updatedPost : p))
-        );
-        setContentModalVisible(false); // 모달 닫기
-      },
-    });
+  const handleEdit = () => {
+    navigation.navigate('EditPost', { post });
   };
 
   const handleDelete = (postId) => {
-    setPosts((prevPosts) => prevPosts.filter((post) => post.id !== postId));
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
     navigation.goBack(); // 삭제 후 이전 화면으로 돌아가기
   };
+  
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -137,15 +143,16 @@ const ViewPost = ({ route }) => {
             <View style={styles.actionIcons}>
               <TouchableOpacity onPress={handleLikeDislike} style={styles.iconButton}>
                 {liked ? (
-                  <FontAwesome name="thumbs-up" size={18} color="#2b4872" />
+                 <AntDesign name="like1" size={18} color="#2b4872" />
                 ) : (
-                  <Feather name="thumbs-up" size={18} color="#2b4872" />
+                  
+                  <AntDesign name="like2" size={18} color="#2b4872" />
                 )}
                 <Text style={styles.iconText}>{likes}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.iconButton}>
                 <Ionicons name="chatbubble-ellipses" size={20} color="#718BAE" />
-                <Text style={styles.iconText}>{comments.length}</Text>
+                <Text style={styles.iconText}>{post.comments}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -161,13 +168,14 @@ const ViewPost = ({ route }) => {
           </Modal>
 
           <CommentSection
-            comments={comments}
+            comments={post.comments}
             setComments={setComments}
             newComment={newComment}
             setNewComment={setNewComment}
             handleAddComment={handleAddComment}
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
+         
           />
 
           <Modal
@@ -178,7 +186,7 @@ const ViewPost = ({ route }) => {
           >
             <TouchableOpacity style={styles.modalOverlay} onPress={closeContentModal}>
               <View style={styles.contentModalView}>
-                <TouchableOpacity onPress={() => handleEdit(post)}>
+                <TouchableOpacity onPress={handleEdit}>
                   <Text
                     style={[
                       styles.contentModalButtonText,
@@ -313,10 +321,10 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
     alignItems: 'center',
-    bottom:260,
-    left:110,
-    borderColor:'#d3dfee',
-    borderWidth:1
+    bottom: 260,
+    left: 110,
+    borderColor: '#d3dfee',
+    borderWidth: 1,
   },
   contentModalButtonText: {
     color: '#2b4872',
@@ -328,7 +336,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    //backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   errorText: {
     color: 'red',
