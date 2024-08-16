@@ -1,7 +1,12 @@
 package com.artistry.artistry.service;
 
 import com.artistry.artistry.model.AppUser;
+import com.artistry.artistry.model.InterestCategory;
 import com.artistry.artistry.repository.AppUserRepository;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +23,7 @@ public class AppUserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+
 
     /**
      * 비밀번호를 암호화합니다.
@@ -124,5 +130,23 @@ public class AppUserService {
      */
     public Optional<AppUser> findById(Long id) {
         return userRepository.findById(id);
+    }
+
+    public void addInterestToUser(Long userId, InterestCategory interest) {
+        Optional<AppUser> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            AppUser user = optionalUser.get();
+            user.addInterest(interest);
+            userRepository.save(user);
+        }
+    }
+
+    public void removeInterestFromUser(Long userId, InterestCategory interest) {
+        Optional<AppUser> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isPresent()) {
+            AppUser user = optionalUser.get();
+            user.removeInterest(interest);
+            userRepository.save(user);
+        }
     }
 }

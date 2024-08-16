@@ -1,24 +1,24 @@
+// CommentLike Entity (댓글 좋아요)
 package com.artistry.artistry.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter @Getter
+@Getter
+@Setter
 @Entity
-public class Follow {
+public class CommentLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "follower_id")
-    private AppUser follower;
+    @JoinColumn(name = "user_id")
+    private AppUser user;
 
     @ManyToOne
-    @JoinColumn(name = "followee_id")
-    private AppUser followee;
-
-    // Getters and Setters
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 }

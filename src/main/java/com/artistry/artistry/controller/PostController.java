@@ -39,7 +39,7 @@ public class PostController {
     @PostMapping("/post/{postId}/scrap")
     public String scrapPost(@PathVariable Long postId, Principal principal) {
         AppUser user = userService.findByUsername(principal.getName()).orElse(null);
-        Post post = postService.findPostById(postId).orElse(null);
+        Post post = postService.findById(postId).orElse(null);
         if (user != null && post != null) {
             postService.scrapPost(user, post);
         }

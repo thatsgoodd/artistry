@@ -1,14 +1,6 @@
 package com.artistry.artistry.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,20 +26,37 @@ public class AppUser {
 
     private boolean enabled = false;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_interests", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "interest")
+    @Enumerated(EnumType.STRING)
+    private Set<InterestCategory> interests = new HashSet<>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Post> posts;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Comment> comments;
+
     @ManyToMany
     @JoinTable(
-            name = "user_scrap",
+            name = "scrap",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "post_id")
     )
-    private Set<Post> scrappedPosts = new HashSet<>();
+    private Set<Post> scraps;
 
     @OneToMany(mappedBy = "follower")
-    private Set<Follow> following = new HashSet<>();
+    private Set<Follow> following;
 
     @OneToMany(mappedBy = "followee")
-    private Set<Follow> followers = new HashSet<>();
+    private Set<Follow> followers;
 
-    // Getters and Setters
+    public void addInterest(InterestCategory interest) {
+        this.interests.add(interest);
+    }
 
+    public void removeInterest(InterestCategory interest) {
+        this.interests.remove(interest);
+    }
 }
