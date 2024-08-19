@@ -9,53 +9,40 @@ import Entypo from '@expo/vector-icons/Entypo';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import CommentSection from '../Comments/CommentSection';  // CommentSection 컴포넌트 가져오기
 import { usePosts } from './PostContext';
-import initialPosts from './posts';
+import { useRoute } from '@react-navigation/native';
 
-const ViewPost = ({ route, navigation }) => {
-  const { post: initialPost } = route.params;
-  const { posts, setPosts ,toggleLike, addComment, deletePost} = usePosts();
-  console.log('Posts:', posts); // Ensure `setPosts` is correctly fetched
-  const [likes, setLikes] = useState(0);
-  const [liked, setLiked] = useState(false);
-  const [comments, setComments] = useState([]);
+const ViewPost = ({navigation }) => {
+  const route = useRoute();
+  const { post: initialPost } = route.params; // 변수 이름을 initialPost로 변경
+  const { posts, setPosts, toggleLike, addComment, deletePost } = usePosts();
+  
+  const post = posts.find(p => p.id === initialPost.id); // initialPost를 사용하여 post 찾기
+
+  if (!post) {
+    console.log('Post not found');
+    return <Text style={styles.errorText}>Post not found</Text>;
+  } else {
+    console.log('Post comments:', Array.isArray(post.comments), post.comments);
+  }
+
+  const [likes, setLikes] = useState(post.likes);
+  const [liked, setLiked] = useState(post.liked || false);
+  const [comments, setComments] = useState(post.comments || []); // 초기 comments 설정
   const [newComment, setNewComment] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
   const [imageModalVisible, setImageModalVisible] = useState(false);
   const [contentModalVisible, setContentModalVisible] = useState(false);
 
-  const post = posts.find(p => p.id === initialPost.id);
-if (!post) {
-  console.log('Post not found');
-} else {
-  console.log('Post comments:', Array.isArray(post.comments), post.comments);
-}
-
-useEffect(() => {
-  if (post) {
-    setComments(post.comments || []); // comments가 배열이 아니면 빈 배열로 초기화
-  }
-}, [post]);
-
-  // Check if post is found
-  if (!post) {
-    return <Text style={styles.errorText}>Post not found</Text>;
-  }
-
   useEffect(() => {
     setLikes(post.likes);
-    setLiked(post.liked || false); // Assuming `liked` is part of the post object
+    setLiked(post.liked || false); 
+    setComments(post.comments || []); // comments 배열 설정
   }, [post]);
 
-  useEffect(() => {
-    if (post) {
-      console.log('Post comments on load:', post.comments);
-      setComments(post.comments || []);
-    }
-  }, [post]);
-  
   const handleLikeDislike = () => {
     toggleLike(post.id); // 전역 상태의 좋아요 관리
   };
+
   const handleAddComment = () => {
     if (newComment.trim()) {
       const newCommentObj = {
@@ -77,7 +64,6 @@ useEffect(() => {
       Keyboard.dismiss();
     }
   };
-  
 
   const openContentModal = () => {
     setContentModalVisible(true);
@@ -95,7 +81,6 @@ useEffect(() => {
     setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
     navigation.goBack(); // 삭제 후 이전 화면으로 돌아가기
   };
-  
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
@@ -143,16 +128,15 @@ useEffect(() => {
             <View style={styles.actionIcons}>
               <TouchableOpacity onPress={handleLikeDislike} style={styles.iconButton}>
                 {liked ? (
-                 <AntDesign name="like1" size={18} color="#2b4872" />
+                  <AntDesign name="like1" size={18} color="#2b4872" />
                 ) : (
-                  
                   <AntDesign name="like2" size={18} color="#2b4872" />
                 )}
                 <Text style={styles.iconText}>{likes}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.iconButton}>
                 <Ionicons name="chatbubble-ellipses" size={20} color="#718BAE" />
-                <Text style={styles.iconText}>{post.comments}</Text>
+                <Text style={styles.iconText}>{comments.length}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -168,14 +152,14 @@ useEffect(() => {
           </Modal>
 
           <CommentSection
-            comments={post.comments}
+            comments={comments}
             setComments={setComments}
             newComment={newComment}
             setNewComment={setNewComment}
             handleAddComment={handleAddComment}
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
-         
+            post={post}
           />
 
           <Modal
@@ -302,7 +286,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     marginLeft: 8,
-    fontSize: 14,
+    fontSize: 12,
     color: '#6a6565',
   },
   modalContainer: {
@@ -312,36 +296,38 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
   fullScreenImage: {
-    width: '90%',
-    height: '90%',
+    width: '100%',
+    height: '100%',
     resizeMode: 'contain',
-  },
-  contentModalView: {
-    backgroundColor: '#ffffff',
-    padding: 10,
-    borderRadius: 10,
-    alignItems: 'center',
-    bottom: 260,
-    left: 110,
-    borderColor: '#d3dfee',
-    borderWidth: 1,
-  },
-  contentModalButtonText: {
-    color: '#2b4872',
-    fontSize: 16,
-    marginTop: 16,
-    textAlign: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   errorText: {
     color: 'red',
-    textAlign: 'center',
     fontSize: 18,
+    textAlign: 'center',
     marginTop: 20,
+  },
+  contentModalView: {
+    position: 'absolute',
+    top: 0,
+    right: 10,
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  contentModalButtonText: {
+    fontSize: 16,
+    color: '#2b4872',
+    marginVertical: 10,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
 

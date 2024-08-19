@@ -8,7 +8,7 @@ import { useWorkSharingPosts } from './WorkSharingContext';
 import { usePhotoPicker } from '../PhotoPicker';
 
 const WorkSharingWritePost = ({ navigation }) => {
-  const { posts, setPosts } = useWorkSharingPosts();
+  const { posts, setPost } = useWorkSharingPosts();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [categoryId, setCategoryId] = useState([]);
@@ -47,14 +47,15 @@ const WorkSharingWritePost = ({ navigation }) => {
       title,
       content,
       categoryId: categoryId.join(', '), // 배열을 문자열로 변환하여 저장
+      
       photos: imageUrls,
       profile: 'https://example.com/default-profile.png',
       name: '작성자 이름',
       bookmarkCount: 0,
       likes: 0,
     };
-
-    setPosts(prevPosts => [...prevPosts, newPost]);
+    console.log("categoryId: ",categoryId);
+    setPost(prevPosts => [...prevPosts, newPost]);
 
     navigation.goBack();
   };
@@ -64,6 +65,7 @@ const WorkSharingWritePost = ({ navigation }) => {
       ? prev.filter(id => id !== category)
       : [...prev, category]
     );
+    //setSelectedCategory(category);
   };
 
   const handleRemoveImage = (uri) => {

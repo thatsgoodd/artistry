@@ -11,7 +11,8 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1571843439991-dd2b8e051966?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8fHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
- 
+    bookmarkCount: 15,
+    likes: 30,
   },
   {
     id: '2',
@@ -24,7 +25,8 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1652804961521-c9fbc7a3f0f1?q=80&w=389&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-    
+    bookmarkCount: 15,
+    likes: 30,
   },
   {
     id: '3',
@@ -39,7 +41,8 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=580&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-   
+    bookmarkCount: 20,
+    likes: 40,
   },
   {
     id: '4',
@@ -52,7 +55,8 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1579341438001-0f21b3789fd7?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-    
+    bookmarkCount: 35,
+    likes: 60,
   },
   {
     id: '5',
@@ -79,7 +83,8 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1508768516479-8f680e229d34?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-    
+    bookmarkCount: 45,
+    likes: 80,
   },
   {
     id: '7',
@@ -93,7 +98,8 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1529757797553-fbc54f10b4a1?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-    
+    bookmarkCount: 25,
+    likes: 50,
   },
   {
     id: '8',
@@ -107,7 +113,8 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-   
+    bookmarkCount: 50,
+    likes: 90,
   }
   // 추가 게시물...
 ];

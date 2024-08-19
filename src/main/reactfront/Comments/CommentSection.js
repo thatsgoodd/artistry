@@ -18,6 +18,7 @@ const CommentSection = ({
     profileImage: 'https://plus.unsplash.com/premium_photo-1668447592220-9845a3c0e768?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
   };
 
+
   const { addCommentedPost } = useCommentedPosts();
 
   const handleLikeDislike = (comment, setComment, isLiked, setIsLiked) => {
@@ -33,6 +34,7 @@ const CommentSection = ({
     handleAddComment();
     addCommentedPost(post); // 댓글을 추가할 때 게시물을 추적
   };
+
 
   return (
     <>

@@ -1,4 +1,4 @@
-import React ,{useState}from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,30 +8,30 @@ import {
   TouchableOpacity,
   Dimensions,
   Modal,
-  TextInput,
-  Button // 추가
 } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import Feather from '@expo/vector-icons/Feather';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import CommentSection from '../Comments/CommentSection';
-import WorkSharingWritePost from './WorkSharingWritePost';
 import { useNavigation } from '@react-navigation/native';
+import { useWorkSharingPosts } from './WorkSharingContext'; // Context 불러오기
+
 const { width } = Dimensions.get('window');
 
 const PostDetail = ({ userId }) => {
   const route = useRoute();
-  const { post } = route.params;
-  const [isImageViewerVisible, setImageViewerVisible] = React.useState(false);
-  const [selectedImageIndex, setSelectedImageIndex] = React.useState(0);
-  const [newComment, setNewComment] = React.useState('');
-  const [comments, setComments] = React.useState(post.comments || []);
-  const [likes, setLikes] = React.useState(post.likes);
-  const [bookmarks, setBookmarks] = React.useState(post.bookmarkCount);
-  const [liked, setLiked] = React.useState(false);
-  const [bookmarked, setBookmarked] = React.useState(false);
-  const [modalVisible, setModalVisible] = React.useState(false); // 모달 상태
-  const [contentModalVisible, setContentModalVisible] = useState(false);
+  const { postId } = route.params;
+  
+  const { posts, updatePost } = useWorkSharingPosts(); // Context에서 posts와 updatePost 함수 가져오기
+  const post = posts.find((p) => p.id === postId); // 해당 포스트 찾기
+
+  const [isImageViewerVisible, setImageViewerVisible] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [newComment, setNewComment] = useState('');
+  const [comments, setComments] = useState(post.comments || []);
+  const [liked, setLiked] = useState(post.liked || false); // 초기 liked 상태
+  const [bookmarked, setBookmarked] = useState(post.bookmarked || false); // 초기 bookmarked 상태
+  const [modalVisible, setModalVisible] = useState(false); // 모달 상태
   const navigation = useNavigation();
   const images = post.photos.map(photo => ({ url: photo }));
 
@@ -52,32 +52,23 @@ const PostDetail = ({ userId }) => {
         likes: 0,
         dislikes: 0,
         liked: false,
-        disliked: false
+        disliked: false,
       };
       setComments([...comments, newCommentData]);
       setNewComment('');
-     // setModalVisible(false); // 모달 닫기
     }
   };
 
   const handleLike = () => {
-    if (!liked) {
-      setLikes(likes + 1);
-      setLiked(true);
-    } else {
-      setLikes(likes - 1);
-      setLiked(false);
-    }
+    const updatedLikes = liked ? post.likes - 1 : post.likes + 1;
+    updatePost(postId, { likes: updatedLikes, liked: !liked }); // 전역 상태 업데이트
+    setLiked(!liked); // 로컬 상태 업데이트
   };
 
   const handleBookmark = () => {
-    if (!bookmarked) {
-      setBookmarks(bookmarks + 1);
-      setBookmarked(true);
-    } else {
-      setBookmarks(bookmarks - 1);
-      setBookmarked(false);
-    }
+    const updatedBookmarks = bookmarked ? post.bookmarkCount - 1 : post.bookmarkCount + 1;
+    updatePost(postId, { bookmarkCount: updatedBookmarks, bookmarked: !bookmarked }); // 전역 상태 업데이트
+    setBookmarked(!bookmarked); // 로컬 상태 업데이트
   };
 
   const renderProfile = () => (
@@ -88,7 +79,7 @@ const PostDetail = ({ userId }) => {
         {post.userId === userId ? (
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => navigation.navigate('WorkSharingWritePost', { postId: post.id })}
+            onPress={() => navigation.navigate('WorkSharingEditPost', { postId: post.id })}
           >
             <Text style={styles.editButtonText}>수정하기</Text>
           </TouchableOpacity>
@@ -101,14 +92,11 @@ const PostDetail = ({ userId }) => {
     </View>
   );
 
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        {/* 프로필 사진, 이름, 팔로우/수정 버튼 */}
         {renderProfile()}
 
-        {/* 이미지 및 기타 내용 */}
         <View style={styles.imageContainer}>
           <Text style={styles.title}>{post.title}</Text>
           <Text style={styles.postContent}>{post.content}</Text>
@@ -125,18 +113,16 @@ const PostDetail = ({ userId }) => {
         <View style={styles.actionContainer}>
           <TouchableOpacity style={styles.actionButtonContainer} onPress={handleLike}>
             <Feather name="thumbs-up" size={19} color="#2b4872" />
-            <Text style={styles.actionCount}>{likes}</Text>
+            <Text style={styles.actionCount}>{post.likes}</Text>
           </TouchableOpacity>
           <Text style={styles.actionName}>좋아요</Text>
           <TouchableOpacity style={styles.actionButtonContainer} onPress={handleBookmark}>
             <Feather name="bookmark" size={23} color="#2b4872" />
-            <Text style={styles.actionCount}>{bookmarks}</Text>
+            <Text style={styles.actionCount}>{post.bookmarkCount}</Text>
           </TouchableOpacity>
           <Text style={styles.actionName}>스크랩</Text>
         </View>
-        {/* 댓글 섹션 */}
 
-        {/* 댓글 작성하기 버튼 */}
         <TouchableOpacity
           style={styles.addCommentButton}
           onPress={() => setModalVisible(true)} // 모달 열기
@@ -147,14 +133,15 @@ const PostDetail = ({ userId }) => {
 
       {/* 댓글 작성 모달 */}
       <CommentSection
-            comments={comments}
-            setComments={setComments}
-            newComment={newComment}
-            setNewComment={setNewComment}
-            handleAddComment={handleAddComment}
-            modalVisible={modalVisible}
-            setModalVisible={setModalVisible}
-          />
+        comments={comments}
+        setComments={setComments}
+        newComment={newComment}
+        setNewComment={setNewComment}
+        handleAddComment={handleAddComment}
+        modalVisible={modalVisible}
+        setModalVisible={setModalVisible}
+        post={post}
+      />
 
       {/* 이미지 뷰어 모달 */}
       <Modal visible={isImageViewerVisible} transparent={true} onRequestClose={() => setImageViewerVisible(false)}>
@@ -165,6 +152,7 @@ const PostDetail = ({ userId }) => {
 };
 
 const styles = StyleSheet.create({
+  // 기존 스타일 그대로 유지
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -188,7 +176,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight:'bold',
+    fontWeight: 'bold',
     color: '#474545',
     paddingHorizontal: 20,
     marginBottom: 10,
@@ -224,8 +212,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     paddingVertical: 5,
     paddingHorizontal: 10,
-    left:240,
-    position:'absolute'
+    left: 240,
+    position: 'absolute',
   },
   editButtonText: {
     color: '#2b4872',
@@ -244,7 +232,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginVertical: 20,
-    paddingHorizontal: 20, // Padding 추가
+    paddingHorizontal: 20,
   },
   actionButtonContainer: {
     width: 61,
@@ -267,47 +255,9 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#2b4872',
     textAlign: 'center',
-    marginTop: 5, // 버튼과 텍스트 사이에 여백 추가
-    top:60,
-    right:55
-  },
-  commentSection: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    backgroundColor: '#fff',
-    borderTopColor: '#ccc',
-    borderTopWidth: 1,
-  },
-  commentInput: {
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 4,
-    padding: 10,
-    marginBottom: 10,
-    fontSize: 14,
-  },
-  commentsContainer: {
-    maxHeight: 200, // 제한 높이
-  },
-  comment: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    padding: 10,
-    borderBottomColor: '#ccc',
-    borderBottomWidth: 1,
-  },
-  commentProfileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  commentContent: {
-    flex: 1,
-  },
-  commentAuthor: {
-    fontWeight: 'bold',
-    marginBottom: 5,
+    marginTop: 5,
+    top: 60,
+    right: 55,
   },
   addCommentButton: {
     backgroundColor: '#d3dfee',
@@ -319,18 +269,6 @@ const styles = StyleSheet.create({
   addCommentButtonText: {
     color: '#2b4872',
     fontSize: 16,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 배경을 반투명하게
-  },
-  modalContent: {
-    width: '90%',
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
   },
 });
 

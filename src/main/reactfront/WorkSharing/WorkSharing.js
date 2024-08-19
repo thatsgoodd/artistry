@@ -8,17 +8,18 @@ import {
   StyleSheet,
   RefreshControl,
   Dimensions,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import Feather from '@expo/vector-icons/Feather';
-import posts from './posts';
-import { useNavigation } from 'expo-router';
-import { useWorkSharingPosts } from './WorkSharingContext';
+import { useNavigation } from '@react-navigation/native';
+import { useWorkSharingPosts } from './WorkSharingContext'; // Importing context hook
+
+const { width } = Dimensions.get('window');
 
 // 카테고리 데이터
 const categories = [
   { id: '건축', name: '건축', image: 'https://images.unsplash.com/photo-1661856182999-267be6e4a698?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
-  { id: '그래픽디자인', name: '그래픽 디자인', image: 'https://images.unsplash.com/photo-1635939412822-8f3ee593d147?q=80&w=1954&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8fHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
+  { id: '그래픽 디자인', name: '그래픽 디자인', image: 'https://images.unsplash.com/photo-1635939412822-8f3ee593d147?q=80&w=1954&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8fHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
   { id: '회화', name: '회화', image: 'https://images.unsplash.com/photo-1525909002-1b05e0c869d8?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8fHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D' },
   { id: '조각', name: '조각', image: 'https://images.unsplash.com/photo-1541618016834-667715db6e8d?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8fHx8fGVufDB8fHx8fA%3D%3D' },
   { id: '판화', name: '판화', image: 'https://images.unsplash.com/photo-1713117222867-df4f430ee979?q=80&w=1968&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8fHx8fGVufDB8fHx8fA%3D%3D' },
@@ -29,18 +30,18 @@ const categories = [
 ];
 
 const ArtBoard = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
-  const { posts } = useWorkSharingPosts(); // 게시물 데이터 가져오기
+  const { posts, selectedCategory, setSelectedCategory } = useWorkSharingPosts(); // Context에서 데이터 가져오기
+  const [refreshing, setRefreshing] = useState(false);
 
+  // posts 데이터가 배열이 아니면 로딩 상태를 표시
   if (!Array.isArray(posts)) {
-    return <Text>Loading...</Text>; // posts가 배열이 아니면 로딩 상태를 표시
+    return <Text>Loading...</Text>;
   }
-  
+
   // 카테고리에 따라 게시물 필터링
   const filteredPosts = selectedCategory
-    ? posts.filter(post => post.categoryId === selectedCategory)
+    ? posts.filter(post => post.categoryId.split(', ').includes(selectedCategory))
     : posts;
 
   const onRefresh = useCallback(() => {
@@ -52,7 +53,10 @@ const ArtBoard = () => {
 
   const CategoryItem = ({ item }) => (
     <TouchableOpacity
-      style={styles.categoryContainer}
+      style={[
+        styles.categoryContainer,
+        selectedCategory === item.id && styles.selectedCategoryContainer
+      ]}
       onPress={() => setSelectedCategory(item.id)}
     >
       <Image
@@ -69,7 +73,7 @@ const ArtBoard = () => {
   const PostItem = ({ item }) => (
     <TouchableOpacity
       style={styles.postContainer}
-      onPress={() => navigation.navigate('PostDetail', { post: item })}
+      onPress={() => navigation.navigate('PostDetail', { postId: item.id })}
     >
       <View style={styles.postContent}>
         <View style={styles.imageContainer}>
@@ -92,7 +96,7 @@ const ArtBoard = () => {
             <View>
               <Text style={styles.profileName}>{item.name}</Text>
               <Text style={styles.message}>
-                {item.content.length > 20 ? item.content.slice(0, 20) : item.content}
+                {item.content.length > 20 ? item.content.slice(0, 20) + '...' : item.content}
               </Text>
             </View>
           </View>
@@ -174,6 +178,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     zIndex: 2,
   },
+  selectedCategoryContainer: {
+    borderColor: '#718bae',
+    borderWidth: 2,
+  },
   categoryImage: {
     width: '100%',
     height: '100%',
@@ -219,7 +227,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     elevation: 10,
     shadowOffset: { width: 0, height: 5 },
-    width: Dimensions.get('window').width,
+    width: width,
     height: 320,
   },
   profileContainer: {
@@ -258,7 +266,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flexDirection: 'row',
-    width: Dimensions.get('window').width,
+    width: width,
     height: 242,
   },
   mainImage: {

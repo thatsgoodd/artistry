@@ -8,7 +8,7 @@ import { useWorkSharingPosts } from './WorkSharingContext';
 import { usePhotoPicker } from '../PhotoPicker';
 
 const WorkSharingEditPost = ({ route, navigation }) => {
-  const { posts, setPosts } = useWorkSharingPosts();
+  const { posts, setPost } = useWorkSharingPosts();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [categoryId, setCategoryId] = useState([]);
@@ -89,7 +89,7 @@ const WorkSharingEditPost = ({ route, navigation }) => {
   
     console.log('Updated Post:', updatedPost); // 수정된 게시물 로그
   
-    setPosts(prevPosts => {
+    setPost(prevPosts => {
       const updatedPosts = prevPosts.map(post => String(post.id) === postIdStr ? updatedPost : post);
       console.log('Updated Posts:', updatedPosts); // 업데이트된 게시물 로그
       return updatedPosts;

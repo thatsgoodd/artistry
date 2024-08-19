@@ -21,7 +21,7 @@ import MaterialDetailScreen from '../../ArtRoom/MaterialDetailScreen';
 import MapScreen from '../../ArtRoom/MapScreen';
 import MaterialInfo from '../../ArtRoom/MaterialInfo';
 import {CommentedPostsProvider} from '../../Comments/CommentedPostsContext';
-
+import CommentSection from '@/Comments/CommentSection';
 function HomeScreen({ navigation }) {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -72,6 +72,8 @@ function App() {
                   <Stack.Screen name="MyCommentedPosts" component={MyCommentedPosts} />
                   <Stack.Screen name="WorkSharingEditPost" component={WorkSharingEditPost} />
                   <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
+                  <Stack.Screen name="CommentSection" component={CommentSection} />
+
                   <Stack.Screen 
                   name="ShopDetailScreen" 
                   component={ShopDetailScreen}
