@@ -57,7 +57,13 @@ const ArtBoard = () => {
         styles.categoryContainer,
         selectedCategory === item.id && styles.selectedCategoryContainer
       ]}
-      onPress={() => setSelectedCategory(item.id)}
+      onPress={() => {
+        if (selectedCategory === item.id) {
+          setSelectedCategory(null);
+        } else {
+          setSelectedCategory(item.id);
+        }
+      }}
     >
       <Image
         source={{ uri: item.image }}

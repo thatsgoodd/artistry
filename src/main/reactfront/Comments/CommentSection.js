@@ -7,6 +7,7 @@ import {
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { useCommentedPosts } from './CommentedPostsContext';
 
 const CommentSection = ({
@@ -70,9 +71,9 @@ const CommentSection = ({
                         setComments(newComments);
                       })} style={styles.likeButton}>
                         {comment.liked ? (
-                          <Entypo name="thumbs-up" size={12} color="#2b4872" />
+                           <AntDesign name="like1" size={12} color="#2b4872" />
                         ) : (
-                          <Feather name="thumbs-up" size={12} color="#2b4872" />
+                          <AntDesign name="like2" size={12} color="#2b4872" />
                         )}
                         <Text style={{ marginLeft: 10, marginRight: 15 }}>{comment.likes}</Text>
                       </TouchableOpacity>

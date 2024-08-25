@@ -308,27 +308,22 @@ const styles = StyleSheet.create({
   },
   contentModalView: {
     position: 'absolute',
-    top: 0,
-    right: 10,
+    top: 120,
+    right: 20,
     backgroundColor: 'white',
     padding: 10,
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    borderWidth:1,
+    justifyContent:'center',
+    alignItems:'center',
+    borderColor:'#d3dfee'
   },
   contentModalButtonText: {
     fontSize: 16,
     color: '#2b4872',
     marginVertical: 10,
   },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
+  
 });
 
 export default ViewPost;

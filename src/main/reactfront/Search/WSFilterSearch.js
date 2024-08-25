@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { sortPosts } from './filterCondition'; // 필터 및 정렬 로직을 가져옵니다.
 
-const FilterSearch = ({ posts = [], onFilterChange }) => { // posts의 기본값을 빈 배열로 설정합니다.
+const FilterSearch = ({ posts=[], onFilterChange }) => {
   const [selectedPeriod, setSelectedPeriod] = useState('');
   const [selectedType, setSelectedType] = useState('');
   const [selectedPopularity, setSelectedPopularity] = useState('');
@@ -15,23 +14,56 @@ const FilterSearch = ({ posts = [], onFilterChange }) => { // posts의 기본값
   const handlePeriodSelect = (value) => {
     setSelectedPeriod(value);
     setIsPeriodVisible(false);
-    const sortedPosts = sortPosts(posts, value, selectedType, selectedPopularity);
-    onFilterChange(sortedPosts);
+    applyFilters();
   };
 
   const handleTypeSelect = (value) => {
     setSelectedType(value);
     setIsTypeVisible(false);
-    const sortedPosts = sortPosts(posts, selectedPeriod, value, selectedPopularity);
-    onFilterChange(sortedPosts);
+    applyFilters();
   };
 
   const handlePopularitySelect = (value) => {
     setSelectedPopularity(value);
     setIsPopularityVisible(false);
-    const sortedPosts = sortPosts(posts, selectedPeriod, selectedType, value);
+    applyFilters();
+  };
+
+  const applyFilters = () => {
+    console.log('Applying filters with:', { selectedPeriod, selectedType, selectedPopularity });
+    const sortedPosts = sortPosts(posts, selectedPeriod, selectedType, selectedPopularity);
+    console.log('Sorted posts:', sortedPosts);
     onFilterChange(sortedPosts);
   };
+  
+  const sortPosts = (posts, period, type, popularity) => {
+    //console.log('Before sorting/filtering:', posts);
+    let filteredPosts = [...posts];
+    //console.log('Filter conditions:', { selectedPeriod, selectedType, selectedPopularity });
+
+  
+    // 기간별 정렬
+    if (period === '최신순') {
+      filteredPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    } else if (period === '오래된순') {
+      filteredPosts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+    }
+    //console.log('After period sorting:', filteredPosts);
+    // 작업 유형 필터
+    if (type && type !== '모든 작업') {
+      filteredPosts = filteredPosts.filter(post => post.type === type);
+    }
+  
+    // 인기순 정렬
+    if (popularity === '좋아요 많은순') {
+      filteredPosts.sort((a, b) => b.likes - a.likes);
+    } else if (popularity === '스크랩 많은순') {
+      filteredPosts.sort((a, b) => b.saves - a.saves);
+    }
+    console.log('After popularity sorting:', filteredPosts);
+    return filteredPosts;
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -148,7 +180,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between', // Ensure icon and text are spaced
+    justifyContent: 'space-between',
   },
   icon: {
     marginRight: 10,
@@ -161,7 +193,7 @@ const styles = StyleSheet.create({
   },
   dropdownMenu: {
     position: 'absolute',
-    top: 42, // 드롭다운 버튼 바로 아래에 위치시킵니다.
+    top: 42,
     left: 0,
     width: '100%',
     backgroundColor: '#fff',
@@ -172,7 +204,7 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     paddingVertical: 10,
-    paddingHorizontal: 15, // Ensure padding is sufficient for click
+    paddingHorizontal: 15,
     justifyContent: 'center',
     alignItems: 'center'
   },

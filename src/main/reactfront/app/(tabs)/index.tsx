@@ -70,7 +70,14 @@ function App() {
                   <Stack.Screen name="WritePost" component={WritePost} />
                   <Stack.Screen name="EditPost" component={EditPost} />
                   <Stack.Screen name="MyCommentedPosts" component={MyCommentedPosts} />
+                  
                   <Stack.Screen name="WorkSharingEditPost" component={WorkSharingEditPost} />
+                  <Stack.Screen name='WorkSharingWritePost' 
+                  component={WorkSharingWritePost} 
+                  options={({})=>({
+                    title:' '
+                  })}/>
+                  
                   <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
                   <Stack.Screen name="CommentSection" component={CommentSection} />
 
@@ -158,7 +165,7 @@ function App() {
                     })}
                   />
 
-                  <Stack.Screen name='WorkSharingWritePost' component={WorkSharingWritePost} />
+                
                   <Stack.Screen name="PostDetail" component={PostDetail}
 
                     options={({ navigation }) => ({

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRoute, useNavigation } from '@react-navigation/native';
-import SearchBar from '@/Search/SearchContainer';
 import shopData from './data/shops.json'; // 초기 shops 데이터
 
 const ShopDetailScreen = () => {
@@ -43,12 +42,6 @@ const ShopDetailScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.searchBarContainer}>
-        <SearchBar
-          searchText={searchText}
-          onChangeText={setSearchText}
-          onSubmitEditing={handleSearch} />
-      </View>
       <View style={styles.header}>
 
         <Image source={{ uri: shop.logo }} style={styles.logo} />

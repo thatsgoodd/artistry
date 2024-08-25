@@ -130,73 +130,70 @@ const MapScreen = () => {
   };
 
   const handleSearch = () => {
-    // 상점 이름 검색
     const allShops = getAllShops();
+
+    // 상점 이름으로 검색
     const matchedShops = allShops.filter(shop =>
       shop.name.toLowerCase().includes(searchText.toLowerCase())
     );
 
-    // 재료 검색
-    let results = [];
+    // 재료 이름으로 검색
+    let materialResults = [];
 
-    for (const city in shopData) {
-      for (const districtData of shopData[city]) {
-        for (const shop of districtData.shops) {
-          const matchingMaterials = shop.materials.filter(material =>
-            material.name.toLowerCase().includes(searchText.toLowerCase())
-          );
+    allShops.forEach(shop => {
+      const matchingMaterials = shop.materials.filter(material =>
+        material.name.toLowerCase().includes(searchText.toLowerCase())
+      );
 
-          if (matchingMaterials.length > 0) {
-            results.push({
-              shop,
-              materials: matchingMaterials
-            });
-          }
-        }
+      if (matchingMaterials.length > 0) {
+        materialResults.push({
+          shop,
+          materials: matchingMaterials,
+        });
       }
-    }
+    });
 
+    // 검색 결과 설정
+    setSelectedShops(matchedShops);
+    setSearchResults(materialResults);
+
+    // 지도 위치 설정
     if (matchedShops.length > 0) {
-      setSelectedShops(matchedShops);
       setRegion({
-        latitude: matchedShops[0].location.latitude, // 첫 번째 상점의 위치로 지도 중심 설정
+        latitude: matchedShops[0].location.latitude,
         longitude: matchedShops[0].location.longitude,
         latitudeDelta: 0.01,
         longitudeDelta: 0.01,
       });
-    } else if (results.length === 0) {
-      Alert.alert('검색 결과 없음', '해당 이름의 화방을 찾을 수 없습니다.');
-      setSelectedShops([]); // 상점 이름 검색 결과가 없으면 선택된 상점 초기화
-    }
-
-    if (results.length > 0) {
-      setSearchResults(results);
-    } else if (matchedShops.length === 0) {
-      Alert.alert('검색 결과 없음', '검색 결과가 없습니다.');
+    } else if (materialResults.length > 0) {
+      setRegion({
+        latitude: materialResults[0].shop.location.latitude,
+        longitude: materialResults[0].shop.location.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      });
+    } else {
+      Alert.alert('검색 결과 없음', '해당 이름의 상점 또는 재료를 찾을 수 없습니다.');
     }
   };
+
   const handleMaterialPress = (material, shop) => {
     navigation.navigate('MaterialDetailScreen', { material, shop });
   };
 
-  const renderResultItem = ({ item }) => (
-    <View style={styles.resultItem}
-  >
-      <View style={styles.header1}>
-        <Image source={{ uri: item.shop.logo }} style={styles.logo} />
-        <Text style={styles.shopName}>{item.shop.name}</Text>
-      </View>
+  const renderShopItem = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate('ShopDetailScreen', { shop: item })}>
+      <ShopInfo shop={item} />
+    </TouchableOpacity>
+  );
+
+  const renderMaterialItem = ({ item }) => (
+    <View style={styles.resultItem}>
       {item.materials.map(material => (
-    
-          <View key={material.name} style={styles.materialItem}>
-          {material.image && <Image source={{ uri: material.image }} style={styles.materialImage} />}
-            <Text style={styles.materialName}>{material.name}</Text>
-            <Text style={styles.materialStock}>재고: {material.stock} 개</Text>
-            
-          </View>
-      
+        <TouchableOpacity key={material.name} onPress={() => handleMaterialPress(material, item.shop)}>
+          <MaterialInfo shop={item.shop} material={material} />
+        </TouchableOpacity>
       ))}
-    
     </View>
   );
 
@@ -206,7 +203,8 @@ const MapScreen = () => {
         <SearchBar
           searchText={searchText}
           onChangeText={setSearchText}
-          onSubmitEditing={handleSearch} />
+          onSubmitEditing={handleSearch}
+        />
       </View>
 
       <View style={styles.header}>
@@ -261,73 +259,56 @@ const MapScreen = () => {
         </View>
       )}
 
-
-
       <MapView
         style={styles.map}
         region={region}
         showsUserLocation={true}
       >
-        {selectedShops.map(shop => (
+        {selectedShops.map((shop, index) => (
           <Marker
-            key={shop.id}
-            coordinate={shop.location}
+            key={index}
+            coordinate={{
+              latitude: shop.location.latitude,
+              longitude: shop.location.longitude,
+            }}
             title={shop.name}
-            description={shop.address}
-            onPress={() => setSelectedShops([shop])} // 하나의 상점을 선택했을 때 해당 상점만 표시
           />
         ))}
       </MapView>
-      {searchType === 'shop' && selectedShops.length > 0 && (
+
+      <View style={styles.resultContainer}>
         <FlatList
-          data={selectedShops} // 선택된 상점들을 표시
-          renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigation.navigate('ShopDetailScreen', { shop: item })}>
-              <ShopInfo shop={item} />
-            </TouchableOpacity>
-          )}
-          keyExtractor={item => item.id.toString()}
-          contentContainerStyle={styles.flatListContainer}
+          data={selectedShops}
+          renderItem={renderShopItem}
+          keyExtractor={(item) => item.name}
+          style={styles.flatList}
         />
-      )}
 
-
-<FlatList
-  data={searchResults}
-  renderItem={({ item }) => (
-    item.materials.map((material) => (
-      <TouchableOpacity
-        key={material.name}
-        onPress={() => navigation.navigate('MaterialDetailScreen', { shop: item.shop, material })}
-      >
-        <MaterialInfo shop={item.shop} material={material} />
-      </TouchableOpacity>
-    ))
-  )}
-  keyExtractor={(item, index) => index.toString()}
-  contentContainerStyle={styles.resultList}
-/>
-
+        <FlatList
+          data={searchResults}
+          renderItem={renderMaterialItem}
+          keyExtractor={(item, index) => item.shop.name + index}
+          style={styles.flatList}
+        />
+      </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-    margin:-15
-
-  }, logo: {
+    margin: -15
+  },
+  logo: {
     width: 38,
     height: 38,
     borderRadius: 25,
     marginBottom: 15,
     // resizeMode: 'cover',
   },
-  header1: {
-    flexDirection: 'row',
-    alignItems:'center'
-  },
+ 
   map: {
     width: '100%',
     height: 245,
@@ -428,7 +409,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: 'bold',
     marginLeft: 20,
-    bottom:5
+    bottom: 5
   },
   shopAddress: {
     fontSize: 16,
@@ -444,12 +425,12 @@ const styles = StyleSheet.create({
   },
   materialItem: {
     //marginTop: 10,
-  // padding: 5,
+    // padding: 5,
     //borderTopWidth: 1,
     //borderColor: '#eee',
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center'
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
   },
   materialName: {
     fontSize: 16,
@@ -463,7 +444,7 @@ const styles = StyleSheet.create({
     width: 139,
     height: 76,
     marginTop: 5,
-   // borderWidth: 1
+    // borderWidth: 1
   },
 });
 

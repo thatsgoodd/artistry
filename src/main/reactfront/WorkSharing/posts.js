@@ -13,6 +13,9 @@ const WorkSharingposts = [
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
     bookmarkCount: 15,
     likes: 30,
+    createdAt: '2022-01-15T08:30:00Z',
+    comments: []
+
   },
   {
     id: '2',
@@ -25,8 +28,10 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1652804961521-c9fbc7a3f0f1?q=80&w=389&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-    bookmarkCount: 15,
-    likes: 30,
+    bookmarkCount: 25,
+    likes: 40,
+    createdAt: '2022-05-22T14:45:00Z',
+    comments: []
   },
   {
     id: '3',
@@ -41,8 +46,11 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?q=80&w=580&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-    bookmarkCount: 20,
-    likes: 40,
+    bookmarkCount: 32,
+    likes: 45,
+
+    createdAt: '2022-09-10T09:20:00Z',
+    comments: []
   },
   {
     id: '4',
@@ -57,6 +65,8 @@ const WorkSharingposts = [
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
     bookmarkCount: 35,
     likes: 60,
+    createdAt: '2022-12-31T16:00:00Z',
+    comments: []
   },
   {
     id: '5',
@@ -70,7 +80,10 @@ const WorkSharingposts = [
       'https://images.unsplash.com/photo-1559127452-3f0c6e1d2c36?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
-    
+    bookmarkCount: 14,
+    likes: 12,
+    createdAt: '2023-03-12T11:15:00Z',
+    comments: []
   },
   {
     id: '6',
@@ -84,7 +97,9 @@ const WorkSharingposts = [
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
     bookmarkCount: 45,
-    likes: 80,
+    likes: 14,
+    createdAt: '2023-06-08T07:50:00Z',
+    comments: []
   },
   {
     id: '7',
@@ -99,7 +114,9 @@ const WorkSharingposts = [
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
     bookmarkCount: 25,
-    likes: 50,
+    likes: 52,
+    createdAt: '2023-08-21T13:05:00Z',
+    comments: []
   },
   {
     id: '8',
@@ -114,9 +131,11 @@ const WorkSharingposts = [
     ],
     profile: 'https://i.pinimg.com/564x/36/fa/7b/36fa7b46c58c94ab0e5251ccd768d669.jpg',
     bookmarkCount: 50,
-    likes: 90,
+    likes: 78,
+    createdAt: '2023-10-19T18:40:00Z',
+    comments: []
   }
-  // 추가 게시물...
+
 ];
 
 export default WorkSharingposts;

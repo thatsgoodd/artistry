@@ -77,6 +77,8 @@ const WorkSharingWritePost = ({ navigation }) => {
       animated: true,
     });
   };
+
+  
   return (
     <KeyboardAvoidingView
       style={styles.container}

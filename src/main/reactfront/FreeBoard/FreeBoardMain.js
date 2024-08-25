@@ -8,7 +8,7 @@ import ViewPost from './ViewPost';
 import EditPost from './EditPost';
 import DeletePost from './DeletePost';
 import MenuModal from './MenuModal'; // MenuModal 컴포넌트 임포트
-import Search from '../Search/SearchMain';
+//import Search from '../Search/SearchMain';
 import SearchScreen from './SearchScreen';
 import MyCommentedPosts from '../Comments/MyCommentedPosts';
 import NotificationScreen from '../Notification/NotificationScreen';
@@ -80,7 +80,7 @@ const App = () => {
 
           <Stack.Screen name="EditPost" component={EditPost} />
           <Stack.Screen name="DeletePost" component={DeletePost} />
-          <Stack.Screen name="Search" component={Search} />
+          {/* <Stack.Screen name="Search" component={Search} /> */}
           <Stack.Screen name="MyCommentedPosts" component={MyCommentedPosts} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} />
           <Stack.Screen

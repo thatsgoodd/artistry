@@ -34,12 +34,12 @@ const MaterialDetailScreen = ({ route }) => {
   };
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.searchBarContainer}>
+      {/* <View style={styles.searchBarContainer}>
         <SearchBar
           searchText={searchText}
           onChangeText={setSearchText}
           onSubmitEditing={handleSearch} />
-      </View>
+      </View> */}
       <View style={styles.header}>
         {shop.logo && <Image source={{ uri: shop.logo }} style={styles.logo} />}
         <Text style={[styles.shopName, { marginLeft: 20 }]}>{shop.name}</Text>

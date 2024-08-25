@@ -18,7 +18,7 @@ import { useWorkSharingPosts } from './WorkSharingContext'; // Context 불러오
 
 const { width } = Dimensions.get('window');
 
-const PostDetail = ({ userId }) => {
+const PostDetail = ({ userId}) => {
   const route = useRoute();
   const { postId } = route.params;
   
@@ -40,6 +40,8 @@ const PostDetail = ({ userId }) => {
     setImageViewerVisible(true);
   };
 
+
+  
   const handleAddComment = () => {
     if (newComment.trim()) {
       const newCommentData = {

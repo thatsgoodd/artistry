@@ -22,7 +22,7 @@ const FreeBoard = ({ navigation }) => {
         content={item.content}
         uploadTime={item.uploadTime}
         likes={item.likes}
-        comments={item.comments}
+        comments={item.comments.length}
       />
     </TouchableOpacity>
   );
