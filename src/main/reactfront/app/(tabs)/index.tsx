@@ -21,6 +21,7 @@ import ArtRoom from "../../ArtRoom/ArtRoomMain";
 import Search from "../../Search/SearchBar";
 import TradeScreen from "../../Trade/TradeScreen";
 import TradePostDetail from "../../Trade/TradePostDetail";
+import SetTradePostLocation from "../../Trade/SetTradePostLocation";
 import AddTradePost from "../../Trade/AddTradePost";
 import SetTradeLocation from "../../Trade/SetTradeLocation";
 import WorkSharingScreen from "../../WorkSharing/WorkSharingScreen";
@@ -41,7 +42,8 @@ import IconButton from "@/Home/IconButton";
 import { TradeLocationProvider } from "@/Trade/TradeLocationContext";
 import SetCollaborationLocation from "../../Collaboration/SetCollaborationLocation";
 import { CollaborationLocationProvider } from "../../Collaboration/CollaborationLocationContext";
-import CollaborationPostDetail from '../../Collaboration/CollaborationPostDetail';
+import CollaborationPostDetail from "../../Collaboration/CollaborationPostDetail";
+import SetCollaborationPostLocation from "../../Collaboration/SetCollaborationPostLocation";
 
 const Stack = createNativeStackNavigator();
 
@@ -122,8 +124,16 @@ function App() {
                     component={CollaborationPostDetail}
                     options={{ headerShown: false }}
                   />
-                  <Stack.Screen name="WritePost" component={WritePost} options={{ headerShown: false }}/>
-                  <Stack.Screen name="EditPost" component={EditPost}options={{ headerShown: false }} />
+                  <Stack.Screen
+                    name="WritePost"
+                    component={WritePost}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="EditPost"
+                    component={EditPost}
+                    options={{ headerShown: false }}
+                  />
                   <Stack.Screen
                     name="MyCommentedPosts"
                     component={MyCommentedPosts}
@@ -142,7 +152,7 @@ function App() {
                       elevation: 0,
                       headerStyle: {
                         borderBottomWidth: 0,
-                        headerShown: false
+                        headerShown: false,
                       },
                     }}
                   />
@@ -200,8 +210,18 @@ function App() {
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen
+                    name="SetTradePostLocation"
+                    component={SetTradePostLocation}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
                     name="SetCollaborationLocation"
                     component={SetCollaborationLocation}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
+                    name="SetCollaborationPostLocation"
+                    component={SetCollaborationPostLocation}
                     options={{ headerShown: false }}
                   />
                   <Stack.Screen
